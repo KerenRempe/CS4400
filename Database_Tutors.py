@@ -245,6 +245,7 @@ class poop:
         l5.grid(row=5, column=0, sticky=E+W)
         e=Entry(self.win2, textvariable=self.gtid)
         e.grid(row=0, column=1, sticky=E+W)
+        e.delete(0, END)
         e1=Entry(self.win2, textvariable=self.fn)
         e1.grid(row=1, column=1, sticky=E+W)
         e2=Entry(self.win2, textvariable=self.ln)
@@ -255,6 +256,7 @@ class poop:
         e4.grid(row=4, column=1, sticky=E+W)
         e5=Entry(self.win2, textvariable=self.telephone)
         e5.grid(row=5, column=1, sticky=E+W)
+        e5.delete(0, END)
         rb=Radiobutton(self.win2, text="Undergraduate", variable=self.el, value=1)
         rb.grid(row=6, column=0, sticky=E+W)
         rb1=Radiobutton(self.win2, text="Graduate", variable=self.el, value=2)
@@ -482,7 +484,7 @@ class poop:
         c=self.db.cursor()
         adict={1: 'self.m9.get()', 2: 'self.m10.get()', 3: 'self.m11.get()', 4: 'self.m12.get()', 5: 'self.m1.get()', 6: 'self.m2.get()', 7: 'self.m3.get()', 8: 'self.m4.get()', 9: 'self.t9.get()', 10: 'self.t10.get()', 11: 'self.t11.get()', 12: 'self.t12.get()', 13: 'self.t1.get()', 14: 'self.t2.get()', 15: 'self.t3.get()', 16: 'self.t4.get()', 17: 'self.w9.get()', 18: 'self.w10.get()', 19: 'self.w11.get()', 20: 'self.w12.get()', 21: 'self.w1.get()', 22: 'self.w2.get()', 23: 'self.w3.get()', 24: 'self.w4.get()', 25: 'self.th9.get()', 26: 'self.th10.get()', 27: 'self.th11.get()', 28: 'self.th12.get()', 29: 'self.th1.get()', 30: 'self.th2.get()', 31: 'self.th3.get()', 32: 'self.th4.get()', 33: 'self.f9.get()', 34: 'self.f10.get()', 35: 'self.f11.get()', 36: 'self.f12.get()', 37: 'self.f1.get()', 38: 'self.f2.get()', 39: 'self.f3.get()', 40: 'self.f4.get()'}
         if self.m9.get()==1:
-            a1=c.execute("INSERT INTO AVAILABLE_TIME_SLOTS (TIME, SEMESTER, WEEKDAY, TUT_GTID) VALUES ((%s),(%s),(%s),(%s))",( "9:00:00",self.semester(), "M",self.iv))
+            a1=c.execute("INSERT INTO AVAILABLE_TIME_SLOTS (TIME, SEMESTER, WEEKDAY, TUT_GTID) VALUES ((%s),(%s),(%s),(%s))",( "9:00:00",self.semester(), "M",str(self.iv.get())))
         if self.m10.get()==2:
                  a2=c.execute("INSERT INTO AVAILABLE_TIME_SLOTS (TIME, SEMESTER, WEEKDAY, TUT_GTID) VALUES ((%s),(%s),(%s),(%s))",( "10:00:00",self.semester(), "M",self.iv))
         if self.m11.get()==3:
