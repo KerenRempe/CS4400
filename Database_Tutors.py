@@ -141,80 +141,83 @@ class poop:
 
     def search1(self):
         num=self.iv6.get()
-        nu=self.o[num][0]
-        co=self.o[num][1]
-        self.nu=nu
-        self.co=co
-        l2=Label(self.win4, text="Day  Time")
-        l2.grid(row=0, column=1, sticky=E+W)
-        # i only want for this semester ****
-        # change semester variable back to self.semester()
-        c=self.db.cursor()
-        j=c.execute("SELECT TIME, WEEKDAY FROM AVAILABLE_TIME_SLOTS WHERE SEMESTER=(%s)", self.semester())
-        j=c.fetchall()
-        self.Search=IntVar()
-        count=1
-        self.daytime=[]
-        for i in j:
-            day=i[1]
-            time=i[0]
-            rb="rbbb"+str(count)
-            this=str(day)+" "+str(time)
-            rb=Radiobutton(self.win4,text=this, value=count, variable=self.Search)
-            rb.grid(row=count, column=1, columnspan=2, sticky=E+W)
-            self.daytime.append([day, time, count])
+        if num==0:
+            messagebox.showinfo(message="Please select a course.")
+        else:                
+            nu=self.o[num][0]
+            co=self.o[num][1]
+            self.nu=nu
+            self.co=co
+            l2=Label(self.win4, text="Day  Time")
+            l2.grid(row=0, column=1, sticky=E+W)
+            # i only want for this semester ****
+            c=self.db.cursor()
+            j=c.execute("SELECT TIME, WEEKDAY FROM AVAILABLE_TIME_SLOTS WHERE SEMESTER=(%s)", self.semester())
+            j=c.fetchall()
+            self.Search=IntVar()
+            count=1
+            self.daytime=[]
+            for i in j:
+                day=i[1]
+                time=i[0]
+                rb="rbbb"+str(count)
+                this=str(day)+" "+str(time)
+                rb=Radiobutton(self.win4, text=this, value=count, variable=self.Search)
+                rb.grid(row=count, column=1, columnspan=2, sticky=E+W)
+                self.daytime.append([day, time, count])
+                count=count+1
+            l4=Label(self.win4, text="Tutor sessions can only be scheduled for one hour per week for a selected course.")
+            l4.grid(row=count, column=1, sticky=E+W)
             count=count+1
-        l4=Label(self.win4, text="Tutor sessions can only be scheduled for one hour per week for a selected course.")
-        l4.grid(row=count, column=1, sticky=E+W)
-        count=count+1
-        b5=Button(self.win4, text="Select Day and Time", command=self.search2)
-        b5.grid(row=self.thisistherow, column=1, sticky=E+W)
+            b5=Button(self.win4, text="Select Day and Time", command=self.search2)
+            b5.grid(row=self.thisistherow, column=1, sticky=E+W)
         
 
     def search2(self):
         a=self.Search.get()
-        c=self.db.cursor()
-        #how do you do a view in python....?
-        for i in self.daytime:
-            if i[2]==a:
-                print(i[2])
-                print(a)
-                print(str(self.nu))
-                print(str(self.co))
-                print(str(i[1]))
-                print(str(i[0]))
-                s=c.execute("SELECT STUDENT.FNAME, STUDENT.LNAME, STUDENT.EMAIL, AVG(RECOMMENDS.NUMERIC_E) AS Average_Prof_Rating, COUNT(DISTINCT RATES.NUMERIC_E) AS Number_Professors, AVG(RATES.NUMERIC_E) AS Average_Student_Rating, COUNT(RATES.NUMERIC_E) AS Number_Students FROM TUTOR INNER JOIN RECOMMENDS ON TUTOR.TUT_GTID= RECOMMENDS.TUT_GTID INNER JOIN STUDENT ON STUDENT.STUD_GTID=TUTOR.TUT_GTID LEFT JOIN RATES ON TUTOR.TUT_GTID=RATES.TUT_GTID INNER JOIN TUTORS ON TUTOR.TUT_GTID=TUTORS.TUT_GTID INNER JOIN AVAILABLE_TIME_SLOTS ON AVAILABLE_TIME_SLOTS.TUT_GTID=TUTOR.TUT_GTID WHERE (%s) IN (SELECT COURSE_NUM FROM COURSE WHERE SCHOOL=(%s)) AND (%s) IN (SELECT TIME FROM AVAILABLE_TIME_SLOTS WHERE WEEKDAY=(%s)) GROUP BY STUDENT.LNAME, STUDENT.FNAME ORDER BY Average_Student_Rating DESC",(str(self.nu),str(self.co),str(i[1]),str(i[0])))
-                s=c.fetchall()
-                print(s)
-                l=Label(self.win4, text="Available Tutors")
-                l.grid(column=4, row=0, sticky=E+W)
-                l1=Label(self.win4, text="Fname \t Lname \t Email \t Average_Prof_Rating \t Num_Professors \t Average Student Rating \t Number Students")
-                l1.grid(column=4, row=1, sticky=E+W)
-                count=2
-                self.search2=IntVar()
-                # s= (('Stud', 'ent', 'stud.ent', Decimal('1.0000'), 1, Decimal('1.0000'), 10),
-                for i in s:
-                    rb="rbbb"+str(count)
-                    this=str(i[0])+" \t"+str(i[1])+" \t"+str(i[2])+" \t"+str(i[3])+" \t"+str(i[4])+" \t"+str(i[5])
-                    rb=Radiobutton(self.win4,text=this, value=count, variable=self.search2)
-                    rb.grid(row=count, column=4, columnspan=2, sticky=E+W)
-                    count=count+1
-                b=Button(self.win4, text="Select a Tutor", command=self.search3)
-                b.grid(row=count, column=4, sticky=E+W)
-##                h=c.execute("SELECT TIME, SEMESTER, WEEKDAY, FROM AVAILABLE_TIME_SLOTS INNER JOIN TUTORS WHERE AVAILABLE_TIME_SLOTS.TUT_GTID=TUTORS.TUT_GTID")
-##                h=c.fetchall()
-##                print(h)
+        if a==0:
+            messagebox.showinfo(message="Please select a day and time.")
+        else:
+            c=self.db.cursor()
+            #how do you do a view in python....?
+            for i in self.daytime:
+                if i[2]==a:
+                    self.time=i[1]
+                    self.weekday=i[0]
+                    s=c.execute("SELECT STUDENT.FNAME, STUDENT.LNAME, STUDENT.EMAIL, AVG(RECOMMENDS.NUMERIC_E) AS Average_Prof_Rating, COUNT(DISTINCT RATES.NUMERIC_E) AS Number_Professors, AVG(RATES.NUMERIC_E) AS Average_Student_Rating, COUNT(RATES.NUMERIC_E) AS Number_Students, TUTOR.TUT_GTID FROM TUTOR INNER JOIN RECOMMENDS ON TUTOR.TUT_GTID= RECOMMENDS.TUT_GTID INNER JOIN STUDENT ON STUDENT.STUD_GTID=TUTOR.TUT_GTID LEFT JOIN RATES ON TUTOR.TUT_GTID=RATES.TUT_GTID INNER JOIN TUTORS ON TUTOR.TUT_GTID=TUTORS.TUT_GTID INNER JOIN AVAILABLE_TIME_SLOTS ON AVAILABLE_TIME_SLOTS.TUT_GTID=TUTOR.TUT_GTID WHERE (%s) IN (SELECT COURSE_NUM FROM COURSE WHERE SCHOOL=(%s)) AND (%s) IN (SELECT TIME FROM AVAILABLE_TIME_SLOTS WHERE WEEKDAY=(%s)) GROUP BY STUDENT.LNAME, STUDENT.FNAME ORDER BY Average_Student_Rating DESC",(str(self.nu),str(self.co),str(i[1]),str(i[0])))
+                    s=c.fetchall()
+                    print(s)
+                    l=Label(self.win4, text="Available Tutors")
+                    l.grid(column=4, row=0, sticky=E+W)
+                    l1=Label(self.win4, text="Fname \t Lname \t Email \t Average_Prof_Rating \t Num_Professors \t Average Student Rating \t Number Students")
+                    l1.grid(column=4, row=1, sticky=E+W)
+                    count=2
+                    self.search2=IntVar()
+                    self.mydick={}
+                    # s= ('Stud', 'ent', 'stud.ent', Decimal('1.0000'), 1, Decimal('1.0000'), 10, 1),
+                    for i in s:
+                        rb="rbbb"+str(count)
+                        this=str(i[0])+" \t"+str(i[1])+" \t"+str(i[2])+" \t"+str(i[3])+" \t"+str(i[4])+" \t"+str(i[5])+"\t"+str(i[6])
+                        rb=Radiobutton(self.win4,text=this, value=count, variable=self.search2)
+                        rb.grid(row=count, column=4, columnspan=2, sticky=E+W)
+                        self.mydick[count]=[i[0],i[1],i[2],i[3],i[4],i[5],i[6],i[7]]
+                        count=count+1
+                    b=Button(self.win4, text="Select a Tutor", command=self.search3)
+                    b.grid(row=count, column=4, sticky=E+W)
 
     def search3(self):
         if self.search2.get()==0:
             messagebox.showinfo("You have to select a tutor in order to schedule an appointment.")
-        s=self.semester()
-        print(s)
-        c=self.db.cursor()
-        l=c.execute("INSERT INTO CHOOSES (UGRAD_GTID, SCHOOL, COURSE_NUM, TIME, WEEKDAY, SEMESTER, TUT_GTID) VALUES ($GTID, $SCHOOL, $COURSE_NUM, $TIME, $WEEKDAY, $SEMESTER, $TUT_GTID)",(self.iv, ))
-        l=c.fetchall()
-                    
-        pass
+        else:           
+            s=self.semester()
+            print(s)
+            n=self.mydick[self.search2.get()]
+            gtid=n[7]
+            c=self.db.cursor()
+            try:
+                l=c.execute("INSERT INTO CHOOSES (UGRAD_GTID, SCHOOL, COURSE_NUM, TIME, WEEKDAY, SEMESTER, TUT_GTID) VALUES ((%s),(%s),(%s),(%s),(%s),(%s),(%s))",(str(self.iv), str(self.co), str(self.nu), str(self.time), str(self.weekday), str(s), str(gtid)))
+            except:
+                messagebox.showinfo(message="Unfortuantely that particular time has already been taken for that particular tutor. Please Select a different time or tutor.")
         
         
     def apply(self):
@@ -226,7 +229,7 @@ class poop:
         self.ln=StringVar()
         self.email=StringVar()
         self.gpa=StringVar()
-        self.tn=IntVar()
+        self.telephone=IntVar()
         self.el=IntVar()
         l=Label(self.win2, text="Georgia Tech ID")
         l.grid(row=0, column=0, sticky=E+W)
@@ -250,7 +253,7 @@ class poop:
         e3.grid(row=3, column=1, sticky=E+W)
         e4=Entry(self.win2, textvariable=self.gpa)
         e4.grid(row=4, column=1, sticky=E+W)
-        e5=Entry(self.win2, textvariable=self.tn)
+        e5=Entry(self.win2, textvariable=self.telephone)
         e5.grid(row=5, column=1, sticky=E+W)
         rb=Radiobutton(self.win2, text="Undergraduate", variable=self.el, value=1)
         rb.grid(row=6, column=0, sticky=E+W)
@@ -270,7 +273,8 @@ class poop:
         ln=self.ln.get()
         email=self.email.get()
         gpa=self.gpa.get()
-        tn=self.tn.get()
+        tn=self.telephone.get()
+        print(tn)
         el=self.el.get()
         if gtid!=self.iv.get():
             messagebox.showinfo(message="An individual cannot apply for another individual.")
@@ -282,14 +286,15 @@ class poop:
             for q in i:
                 alist.append(q)
         if gtid not in alist:
-            messagebox.showinfo(message="You are not a student and are not elligible to apply to be a tutor.")               
+            messagebox.showinfo(message="You are not a student and are not elligible to apply to be a tutor.")
+            self.killthiswin()
         tu=c.execute("SELECT TUT_GTID FROM TUTOR")
         tu=c.fetchall()
         if gtid in tu:
             messagebox.showinfo(message="You are already a tutor! Congrats!")
+            self.killthiswin()
         if float(gpa)<3.0:
             messagebox.showinfo(message="Your GPA does not meet the 3.0 minimum.")
-        #this insert statement doesn't work if you try it more than once 
         i=c.execute("INSERT INTO TUTOR (TUT_GTID, TELEPHONE, GPA) VALUES ((%s), (%s), (%s))", (str(gtid), str(tn), str(gpa))) 
         if self.el.get()==2:
             p=c.execute("INSERT INTO GRAD (GRAD_GTID) VALUES (%s)", str(gtid))
@@ -320,20 +325,22 @@ class poop:
             b.grid(row=r, column=0, sticky=E+W)
         if self.el.get()==1:
             tt=c.execute("INSERT INTO UNDERGRAD (UGRAD_GTID) VALUES (%s)", str(gtid))
-##          IF YOU NEED TO GET OUT OF WINDOW 
-##                self.win2.withdraw()
-##                self.Mainmenu()
+            self.insertapp2()
+
+    def killthiswin(self):
+        self.win3.withdraw()
+        self.Mainmenu()
 
     def insertapp2(self):
         c=self.db.cursor()
-        print(self.courseandvar)
-        checklist=self.courseandvar.values()
-        for i in checklist:
-            app=exec(i[1].get())
-            if i[0]==app:
-                h=c.execute("INSERT INTO TUTORS (TUT_GTID, SCHOOL, COURSE_NUM, GTA) VALUES ((%s),(%s),(%s),(%s))", self.iv, i[1], i[2], "TRUE")  
-        #EACH RADIO BUTTON HAS ITS OWN VARIABLE BECAUSE CAN BE MULTIPLE CHOICE
-        self.win3.withdraw()
+        if self.el.get()==2:
+            checklist=self.courseandvar.values()
+            for i in checklist:
+                app=exec(i[1].get())
+                if i[0]==app:
+                    h=c.execute("INSERT INTO TUTORS (TUT_GTID, SCHOOL, COURSE_NUM, GTA) VALUES ((%s),(%s),(%s),(%s))", self.iv, i[1], i[2], "TRUE")  
+            #EACH RADIO BUTTON HAS ITS OWN VARIABLE BECAUSE CAN BE MULTIPLE CHOICE
+        self.win2.withdraw()
         self.win6=Toplevel()
         self.win6.title("Available Days/Times")
         l=Label(self.win6, text="Monday")
@@ -475,85 +482,85 @@ class poop:
         c=self.db.cursor()
         adict={1: 'self.m9.get()', 2: 'self.m10.get()', 3: 'self.m11.get()', 4: 'self.m12.get()', 5: 'self.m1.get()', 6: 'self.m2.get()', 7: 'self.m3.get()', 8: 'self.m4.get()', 9: 'self.t9.get()', 10: 'self.t10.get()', 11: 'self.t11.get()', 12: 'self.t12.get()', 13: 'self.t1.get()', 14: 'self.t2.get()', 15: 'self.t3.get()', 16: 'self.t4.get()', 17: 'self.w9.get()', 18: 'self.w10.get()', 19: 'self.w11.get()', 20: 'self.w12.get()', 21: 'self.w1.get()', 22: 'self.w2.get()', 23: 'self.w3.get()', 24: 'self.w4.get()', 25: 'self.th9.get()', 26: 'self.th10.get()', 27: 'self.th11.get()', 28: 'self.th12.get()', 29: 'self.th1.get()', 30: 'self.th2.get()', 31: 'self.th3.get()', 32: 'self.th4.get()', 33: 'self.f9.get()', 34: 'self.f10.get()', 35: 'self.f11.get()', 36: 'self.f12.get()', 37: 'self.f1.get()', 38: 'self.f2.get()', 39: 'self.f3.get()', 40: 'self.f4.get()'}
         if self.m9.get()==1:
-            a1=c.execute("INSERT INTO AVAILABLE_TIME_SLOTS (TIME, SEMESTER, WEEKDAY, TUT_GTID) VALUES ((%s),(%s),(%s),(%s))", "9:00:00",self.semester(), "M",self.iv)
+            a1=c.execute("INSERT INTO AVAILABLE_TIME_SLOTS (TIME, SEMESTER, WEEKDAY, TUT_GTID) VALUES ((%s),(%s),(%s),(%s))",( "9:00:00",self.semester(), "M",self.iv))
         if self.m10.get()==2:
-                 a2=c.execute("INSERT INTO AVAILABLE_TIME_SLOTS (TIME, SEMESTER, WEEKDAY, TUT_GTID) VALUES ((%s),(%s),(%s),(%s))", "10:00:00",self.semester(), "M",self.iv)
+                 a2=c.execute("INSERT INTO AVAILABLE_TIME_SLOTS (TIME, SEMESTER, WEEKDAY, TUT_GTID) VALUES ((%s),(%s),(%s),(%s))",( "10:00:00",self.semester(), "M",self.iv))
         if self.m11.get()==3:
-                 a3=c.execute("INSERT INTO AVAILABLE_TIME_SLOTS (TIME, SEMESTER, WEEKDAY, TUT_GTID) VALUES ((%s),(%s),(%s),(%s))", "11:00:00",self.semester(), "M",self.iv)
+                 a3=c.execute("INSERT INTO AVAILABLE_TIME_SLOTS (TIME, SEMESTER, WEEKDAY, TUT_GTID) VALUES ((%s),(%s),(%s),(%s))",( "11:00:00",self.semester(), "M",self.iv))
         if self.m12.get()==4:
-                 a4=c.execute("INSERT INTO AVAILABLE_TIME_SLOTS (TIME, SEMESTER, WEEKDAY, TUT_GTID) VALUES ((%s),(%s),(%s),(%s))", "12:00:00",self.semester(), "M",self.iv)
+                 a4=c.execute("INSERT INTO AVAILABLE_TIME_SLOTS (TIME, SEMESTER, WEEKDAY, TUT_GTID) VALUES ((%s),(%s),(%s),(%s))", ("12:00:00",self.semester(), "M",self.iv))
         if self.m1.get()==5:
-                 a5=c.execute("INSERT INTO AVAILABLE_TIME_SLOTS (TIME, SEMESTER, WEEKDAY, TUT_GTID) VALUES ((%s),(%s),(%s),(%s))", "13:00:00",self.semester(), "M",self.iv)
+                 a5=c.execute("INSERT INTO AVAILABLE_TIME_SLOTS (TIME, SEMESTER, WEEKDAY, TUT_GTID) VALUES ((%s),(%s),(%s),(%s))",( "13:00:00",self.semester(), "M",self.iv))
         if self.m2.get()==6:
-                 a6=c.execute("INSERT INTO AVAILABLE_TIME_SLOTS (TIME, SEMESTER, WEEKDAY, TUT_GTID) VALUES ((%s),(%s),(%s),(%s))", "14:00:00",self.semester(), "M",self.iv)
+                 a6=c.execute("INSERT INTO AVAILABLE_TIME_SLOTS (TIME, SEMESTER, WEEKDAY, TUT_GTID) VALUES ((%s),(%s),(%s),(%s))", ("14:00:00",self.semester(), "M",self.iv))
         if self.m3.get()==7:
-                 a7=c.execute("INSERT INTO AVAILABLE_TIME_SLOTS (TIME, SEMESTER, WEEKDAY, TUT_GTID) VALUES ((%s),(%s),(%s),(%s))", "15:00:00",self.semester(), "M",self.iv)
+                 a7=c.execute("INSERT INTO AVAILABLE_TIME_SLOTS (TIME, SEMESTER, WEEKDAY, TUT_GTID) VALUES ((%s),(%s),(%s),(%s))", ("15:00:00",self.semester(), "M",self.iv))
         if self.m4.get()==8:
-                 a8=c.execute("INSERT INTO AVAILABLE_TIME_SLOTS (TIME, SEMESTER, WEEKDAY, TUT_GTID) VALUES ((%s),(%s),(%s),(%s))", "16:00:00",self.semester(), "M",self.iv)
+                 a8=c.execute("INSERT INTO AVAILABLE_TIME_SLOTS (TIME, SEMESTER, WEEKDAY, TUT_GTID) VALUES ((%s),(%s),(%s),(%s))", ("16:00:00",self.semester(), "M",self.iv))
         if self.t9.get()==9:
-                 a9=c.execute("INSERT INTO AVAILABLE_TIME_SLOTS (TIME, SEMESTER, WEEKDAY, TUT_GTID) VALUES ((%s),(%s),(%s),(%s))", "9:00:00",self.semester(), "T",self.iv)
+                 a9=c.execute("INSERT INTO AVAILABLE_TIME_SLOTS (TIME, SEMESTER, WEEKDAY, TUT_GTID) VALUES ((%s),(%s),(%s),(%s))", ("9:00:00",self.semester(), "T",self.iv))
         if self.t10.get()==10:
-                 a10=c.execute("INSERT INTO AVAILABLE_TIME_SLOTS (TIME, SEMESTER, WEEKDAY, TUT_GTID) VALUES ((%s),(%s),(%s),(%s))", "10:00:00",self.semester(), "T",self.iv)
+                 a10=c.execute("INSERT INTO AVAILABLE_TIME_SLOTS (TIME, SEMESTER, WEEKDAY, TUT_GTID) VALUES ((%s),(%s),(%s),(%s))", ("10:00:00",self.semester(), "T",self.iv))
         if self.t11.get()==11:
-                 a11=c.execute("INSERT INTO AVAILABLE_TIME_SLOTS (TIME, SEMESTER, WEEKDAY, TUT_GTID) VALUES ((%s),(%s),(%s),(%s))", "11:00:00",self.semester(), "T",self.iv)
+                 a11=c.execute("INSERT INTO AVAILABLE_TIME_SLOTS (TIME, SEMESTER, WEEKDAY, TUT_GTID) VALUES ((%s),(%s),(%s),(%s))", ("11:00:00",self.semester(), "T",self.iv))
         if self.t12.get()==12:
-                 a12=c.execute("INSERT INTO AVAILABLE_TIME_SLOTS (TIME, SEMESTER, WEEKDAY, TUT_GTID) VALUES ((%s),(%s),(%s),(%s))", "12:00:00",self.semester(), "T",self.iv)
+                 a12=c.execute("INSERT INTO AVAILABLE_TIME_SLOTS (TIME, SEMESTER, WEEKDAY, TUT_GTID) VALUES ((%s),(%s),(%s),(%s))", ("12:00:00",self.semester(), "T",self.iv))
         if self.t1.get()==13:
-                 a13=c.execute("INSERT INTO AVAILABLE_TIME_SLOTS (TIME, SEMESTER, WEEKDAY, TUT_GTID) VALUES ((%s),(%s),(%s),(%s))", "13:00:00",self.semester(), "T",self.iv)
+                 a13=c.execute("INSERT INTO AVAILABLE_TIME_SLOTS (TIME, SEMESTER, WEEKDAY, TUT_GTID) VALUES ((%s),(%s),(%s),(%s))", ("13:00:00",self.semester(), "T",self.iv))
         if self.t2.get()==14:
-                 a14=c.execute("INSERT INTO AVAILABLE_TIME_SLOTS (TIME, SEMESTER, WEEKDAY, TUT_GTID) VALUES ((%s),(%s),(%s),(%s))", "14:00:00",self.semester(), "T",self.iv)
+                 a14=c.execute("INSERT INTO AVAILABLE_TIME_SLOTS (TIME, SEMESTER, WEEKDAY, TUT_GTID) VALUES ((%s),(%s),(%s),(%s))",( "14:00:00",self.semester(), "T",self.iv))
         if self.t3.get()==15:
-                 a15=c.execute("INSERT INTO AVAILABLE_TIME_SLOTS (TIME, SEMESTER, WEEKDAY, TUT_GTID) VALUES ((%s),(%s),(%s),(%s))", "15:00:00",self.semester(), "T",self.iv)
+                 a15=c.execute("INSERT INTO AVAILABLE_TIME_SLOTS (TIME, SEMESTER, WEEKDAY, TUT_GTID) VALUES ((%s),(%s),(%s),(%s))", ("15:00:00",self.semester(), "T",self.iv))
         if self.t4.get()==16:
-                 a16=c.execute("INSERT INTO AVAILABLE_TIME_SLOTS (TIME, SEMESTER, WEEKDAY, TUT_GTID) VALUES ((%s),(%s),(%s),(%s))", "16:00:00",self.semester(), "T",self.iv)
+                 a16=c.execute("INSERT INTO AVAILABLE_TIME_SLOTS (TIME, SEMESTER, WEEKDAY, TUT_GTID) VALUES ((%s),(%s),(%s),(%s))", ("16:00:00",self.semester(), "T",self.iv))
         if self.w9.get()==17:
-                 a17=c.execute("INSERT INTO AVAILABLE_TIME_SLOTS (TIME, SEMESTER, WEEKDAY, TUT_GTID) VALUES ((%s),(%s),(%s),(%s))", "9:00:00",self.semester(), "W",self.iv)
+                 a17=c.execute("INSERT INTO AVAILABLE_TIME_SLOTS (TIME, SEMESTER, WEEKDAY, TUT_GTID) VALUES ((%s),(%s),(%s),(%s))", ("9:00:00",self.semester(), "W",self.iv))
         if self.w10.get()==18:
-                 a18=c.execute("INSERT INTO AVAILABLE_TIME_SLOTS (TIME, SEMESTER, WEEKDAY, TUT_GTID) VALUES ((%s),(%s),(%s),(%s))", "10:00:00",self.semester(), "W",self.iv)
+                 a18=c.execute("INSERT INTO AVAILABLE_TIME_SLOTS (TIME, SEMESTER, WEEKDAY, TUT_GTID) VALUES ((%s),(%s),(%s),(%s))",( "10:00:00",self.semester(), "W",self.iv))
         if self.w11.get()==19:
-                 a19=c.execute("INSERT INTO AVAILABLE_TIME_SLOTS (TIME, SEMESTER, WEEKDAY, TUT_GTID) VALUES ((%s),(%s),(%s),(%s))", "11:00:00",self.semester(), "W",self.iv)
+                 a19=c.execute("INSERT INTO AVAILABLE_TIME_SLOTS (TIME, SEMESTER, WEEKDAY, TUT_GTID) VALUES ((%s),(%s),(%s),(%s))",( "11:00:00",self.semester(), "W",self.iv))
         if self.w12.get()==20:
-                 a20=c.execute("INSERT INTO AVAILABLE_TIME_SLOTS (TIME, SEMESTER, WEEKDAY, TUT_GTID) VALUES ((%s),(%s),(%s),(%s))", "12:00:00",self.semester(), "W",self.iv)
+                 a20=c.execute("INSERT INTO AVAILABLE_TIME_SLOTS (TIME, SEMESTER, WEEKDAY, TUT_GTID) VALUES ((%s),(%s),(%s),(%s))", ("12:00:00",self.semester(), "W",self.iv))
         if self.w1.get()==21:
-                 a21=c.execute("INSERT INTO AVAILABLE_TIME_SLOTS (TIME, SEMESTER, WEEKDAY, TUT_GTID) VALUES ((%s),(%s),(%s),(%s))", "13:00:00",self.semester(), "W",self.iv)
+                 a21=c.execute("INSERT INTO AVAILABLE_TIME_SLOTS (TIME, SEMESTER, WEEKDAY, TUT_GTID) VALUES ((%s),(%s),(%s),(%s))", ("13:00:00",self.semester(), "W",self.iv))
         if self.w2.get()==22:
-                 a22=c.execute("INSERT INTO AVAILABLE_TIME_SLOTS (TIME, SEMESTER, WEEKDAY, TUT_GTID) VALUES ((%s),(%s),(%s),(%s))", "14:00:00",self.semester(), "W",self.iv)
+                 a22=c.execute("INSERT INTO AVAILABLE_TIME_SLOTS (TIME, SEMESTER, WEEKDAY, TUT_GTID) VALUES ((%s),(%s),(%s),(%s))", ("14:00:00",self.semester(), "W",self.iv))
         if self.w3.get()==23:
-                 a23=c.execute("INSERT INTO AVAILABLE_TIME_SLOTS (TIME, SEMESTER, WEEKDAY, TUT_GTID) VALUES ((%s),(%s),(%s),(%s))", "15:00:00",self.semester(), "W",self.iv)
+                 a23=c.execute("INSERT INTO AVAILABLE_TIME_SLOTS (TIME, SEMESTER, WEEKDAY, TUT_GTID) VALUES ((%s),(%s),(%s),(%s))", ("15:00:00",self.semester(), "W",self.iv))
         if self.w4.get()==24:
-                 a24=c.execute("INSERT INTO AVAILABLE_TIME_SLOTS (TIME, SEMESTER, WEEKDAY, TUT_GTID) VALUES ((%s),(%s),(%s),(%s))", "16:00:00",self.semester(), "W",self.iv)
+                 a24=c.execute("INSERT INTO AVAILABLE_TIME_SLOTS (TIME, SEMESTER, WEEKDAY, TUT_GTID) VALUES ((%s),(%s),(%s),(%s))", ("16:00:00",self.semester(), "W",self.iv))
         if self.th9.get()==25:
-                 a25=c.execute("INSERT INTO AVAILABLE_TIME_SLOTS (TIME, SEMESTER, WEEKDAY, TUT_GTID) VALUES ((%s),(%s),(%s),(%s))", "9:00:00",self.semester(), "Th",self.iv)
+                 a25=c.execute("INSERT INTO AVAILABLE_TIME_SLOTS (TIME, SEMESTER, WEEKDAY, TUT_GTID) VALUES ((%s),(%s),(%s),(%s))", ("9:00:00",self.semester(), "Th",self.iv))
         if self.th10.get()==26:
-                 a26=c.execute("INSERT INTO AVAILABLE_TIME_SLOTS (TIME, SEMESTER, WEEKDAY, TUT_GTID) VALUES ((%s),(%s),(%s),(%s))", "10:00:00",self.semester(), "Th",self.iv)
+                 a26=c.execute("INSERT INTO AVAILABLE_TIME_SLOTS (TIME, SEMESTER, WEEKDAY, TUT_GTID) VALUES ((%s),(%s),(%s),(%s))", ("10:00:00",self.semester(), "Th",self.iv))
         if self.th11.get()==27:
-                 a27=c.execute("INSERT INTO AVAILABLE_TIME_SLOTS (TIME, SEMESTER, WEEKDAY, TUT_GTID) VALUES ((%s),(%s),(%s),(%s))", "11:00:00",self.semester(), "Th",self.iv)
+                 a27=c.execute("INSERT INTO AVAILABLE_TIME_SLOTS (TIME, SEMESTER, WEEKDAY, TUT_GTID) VALUES ((%s),(%s),(%s),(%s))", ("11:00:00",self.semester(), "Th",self.iv))
         if self.th12.get()==28:
-                 a28=c.execute("INSERT INTO AVAILABLE_TIME_SLOTS (TIME, SEMESTER, WEEKDAY, TUT_GTID) VALUES ((%s),(%s),(%s),(%s))", "12:00:00",self.semester(), "Th",self.iv)
+                 a28=c.execute("INSERT INTO AVAILABLE_TIME_SLOTS (TIME, SEMESTER, WEEKDAY, TUT_GTID) VALUES ((%s),(%s),(%s),(%s))", ("12:00:00",self.semester(), "Th",self.iv))
         if self.th1.get()==29:
-                 a29=c.execute("INSERT INTO AVAILABLE_TIME_SLOTS (TIME, SEMESTER, WEEKDAY, TUT_GTID) VALUES ((%s),(%s),(%s),(%s))", "13:00:00",self.semester(), "Th",self.iv)
+                 a29=c.execute("INSERT INTO AVAILABLE_TIME_SLOTS (TIME, SEMESTER, WEEKDAY, TUT_GTID) VALUES ((%s),(%s),(%s),(%s))", ("13:00:00",self.semester(), "Th",self.iv))
         if self.th2.get()==30:
-                 a30=c.execute("INSERT INTO AVAILABLE_TIME_SLOTS (TIME, SEMESTER, WEEKDAY, TUT_GTID) VALUES ((%s),(%s),(%s),(%s))", "14:00:00",self.semester(), "Th",self.iv)
+                 a30=c.execute("INSERT INTO AVAILABLE_TIME_SLOTS (TIME, SEMESTER, WEEKDAY, TUT_GTID) VALUES ((%s),(%s),(%s),(%s))", ("14:00:00",self.semester(), "Th",self.iv))
         if self.th3.get()==31:
-                 a31=c.execute("INSERT INTO AVAILABLE_TIME_SLOTS (TIME, SEMESTER, WEEKDAY, TUT_GTID) VALUES ((%s),(%s),(%s),(%s))", "15:00:00",self.semester(), "Th",self.iv)
+                 a31=c.execute("INSERT INTO AVAILABLE_TIME_SLOTS (TIME, SEMESTER, WEEKDAY, TUT_GTID) VALUES ((%s),(%s),(%s),(%s))", ("15:00:00",self.semester(), "Th",self.iv))
         if self.th4.get()==32:
-                 a32=c.execute("INSERT INTO AVAILABLE_TIME_SLOTS (TIME, SEMESTER, WEEKDAY, TUT_GTID) VALUES ((%s),(%s),(%s),(%s))", "16:00:00",self.semester(), "Th",self.iv)
+                 a32=c.execute("INSERT INTO AVAILABLE_TIME_SLOTS (TIME, SEMESTER, WEEKDAY, TUT_GTID) VALUES ((%s),(%s),(%s),(%s))", ("16:00:00",self.semester(), "Th",self.iv))
         if self.f9.get()==33:
-                 a33=c.execute("INSERT INTO AVAILABLE_TIME_SLOTS (TIME, SEMESTER, WEEKDAY, TUT_GTID) VALUES ((%s),(%s),(%s),(%s))", "9:00:00",self.semester(), "F",self.iv)
+                 a33=c.execute("INSERT INTO AVAILABLE_TIME_SLOTS (TIME, SEMESTER, WEEKDAY, TUT_GTID) VALUES ((%s),(%s),(%s),(%s))", ("9:00:00",self.semester(), "F",self.iv))
         if self.f10.get()==34:
-                 a34=c.execute("INSERT INTO AVAILABLE_TIME_SLOTS (TIME, SEMESTER, WEEKDAY, TUT_GTID) VALUES ((%s),(%s),(%s),(%s))", "10:00:00",self.semester(), "F",self.iv)
+                 a34=c.execute("INSERT INTO AVAILABLE_TIME_SLOTS (TIME, SEMESTER, WEEKDAY, TUT_GTID) VALUES ((%s),(%s),(%s),(%s))", ("10:00:00",self.semester(), "F",self.iv))
         if self.f11.get()==35:
-                 a35=c.execute("INSERT INTO AVAILABLE_TIME_SLOTS (TIME, SEMESTER, WEEKDAY, TUT_GTID) VALUES ((%s),(%s),(%s),(%s))", "11:00:00",self.semester(), "F",self.iv)
+                 a35=c.execute("INSERT INTO AVAILABLE_TIME_SLOTS (TIME, SEMESTER, WEEKDAY, TUT_GTID) VALUES ((%s),(%s),(%s),(%s))",( "11:00:00",self.semester(), "F",self.iv))
         if self.f12.get()==36:
-                 a36=c.execute("INSERT INTO AVAILABLE_TIME_SLOTS (TIME, SEMESTER, WEEKDAY, TUT_GTID) VALUES ((%s),(%s),(%s),(%s))", "12:00:00",self.semester(), "F",self.iv)
+                 a36=c.execute("INSERT INTO AVAILABLE_TIME_SLOTS (TIME, SEMESTER, WEEKDAY, TUT_GTID) VALUES ((%s),(%s),(%s),(%s))", ("12:00:00",self.semester(), "F",self.iv))
         if self.f1.get()==37:
-                 a37=c.execute("INSERT INTO AVAILABLE_TIME_SLOTS (TIME, SEMESTER, WEEKDAY, TUT_GTID) VALUES ((%s),(%s),(%s),(%s))", "13:00:00",self.semester(), "F",self.iv)
+                 a37=c.execute("INSERT INTO AVAILABLE_TIME_SLOTS (TIME, SEMESTER, WEEKDAY, TUT_GTID) VALUES ((%s),(%s),(%s),(%s))",( "13:00:00",self.semester(), "F",self.iv))
         if self.f2.get()==38:
-                 a38=c.execute("INSERT INTO AVAILABLE_TIME_SLOTS (TIME, SEMESTER, WEEKDAY, TUT_GTID) VALUES ((%s),(%s),(%s),(%s))", "14:00:00",self.semester(), "F",self.iv)
+                 a38=c.execute("INSERT INTO AVAILABLE_TIME_SLOTS (TIME, SEMESTER, WEEKDAY, TUT_GTID) VALUES ((%s),(%s),(%s),(%s))", ("14:00:00",self.semester(), "F",self.iv))
         if self.f3.get()==39:
-                 a39=c.execute("INSERT INTO AVAILABLE_TIME_SLOTS (TIME, SEMESTER, WEEKDAY, TUT_GTID) VALUES ((%s),(%s),(%s),(%s))", "15:00:00",self.semester(), "F",self.iv)
+                 a39=c.execute("INSERT INTO AVAILABLE_TIME_SLOTS (TIME, SEMESTER, WEEKDAY, TUT_GTID) VALUES ((%s),(%s),(%s),(%s))", ("15:00:00",self.semester(), "F",self.iv))
         if self.f4.get()==40:
-                 a40=c.execute("INSERT INTO AVAILABLE_TIME_SLOTS (TIME, SEMESTER, WEEKDAY, TUT_GTID) VALUES ((%s),(%s),(%s),(%s))", "16:00:00",self.semester(), "F",self.iv)
+                 a40=c.execute("INSERT INTO AVAILABLE_TIME_SLOTS (TIME, SEMESTER, WEEKDAY, TUT_GTID) VALUES ((%s),(%s),(%s),(%s))", ("16:00:00",self.semester(), "F",self.iv))
                 
 
     def cancel(self):
