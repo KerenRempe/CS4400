@@ -479,6 +479,13 @@ class poop:
         rb39.grid(column=7, row=9, sticky=E+W)
         b=Button(self.win6, text="Select", command=self.insertapp3)
         b.grid(row=10, column=0, sticky=E+W)
+        b1=Button(self.win6, text="Unselect All", command=self.unselect)
+        b1.grid(row=10, column=1, sticky=E+W)
+
+    def unselect(self):
+        self.m9.set(0)
+        self.m10.set(0)
+        self.f4.set(0)
 
     def insertapp3(self):
         c=self.db.cursor()
@@ -486,83 +493,83 @@ class poop:
         if self.m9.get()==1:
             a1=c.execute("INSERT INTO AVAILABLE_TIME_SLOTS (TIME, SEMESTER, WEEKDAY, TUT_GTID) VALUES ((%s),(%s),(%s),(%s))",( "9:00:00",self.semester(), "M",str(self.iv.get())))
         if self.m10.get()==2:
-                 a2=c.execute("INSERT INTO AVAILABLE_TIME_SLOTS (TIME, SEMESTER, WEEKDAY, TUT_GTID) VALUES ((%s),(%s),(%s),(%s))",( "10:00:00",self.semester(), "M",self.iv))
+                 a2=c.execute("INSERT INTO AVAILABLE_TIME_SLOTS (TIME, SEMESTER, WEEKDAY, TUT_GTID) VALUES ((%s),(%s),(%s),(%s))",( "10:00:00",self.semester(), "M",str(self.iv.get())))
         if self.m11.get()==3:
-                 a3=c.execute("INSERT INTO AVAILABLE_TIME_SLOTS (TIME, SEMESTER, WEEKDAY, TUT_GTID) VALUES ((%s),(%s),(%s),(%s))",( "11:00:00",self.semester(), "M",self.iv))
+                 a3=c.execute("INSERT INTO AVAILABLE_TIME_SLOTS (TIME, SEMESTER, WEEKDAY, TUT_GTID) VALUES ((%s),(%s),(%s),(%s))",( "11:00:00",self.semester(), "M",str(self.iv.get())))
         if self.m12.get()==4:
-                 a4=c.execute("INSERT INTO AVAILABLE_TIME_SLOTS (TIME, SEMESTER, WEEKDAY, TUT_GTID) VALUES ((%s),(%s),(%s),(%s))", ("12:00:00",self.semester(), "M",self.iv))
+                 a4=c.execute("INSERT INTO AVAILABLE_TIME_SLOTS (TIME, SEMESTER, WEEKDAY, TUT_GTID) VALUES ((%s),(%s),(%s),(%s))", ("12:00:00",self.semester(), "M",str(self.iv.get())))
         if self.m1.get()==5:
-                 a5=c.execute("INSERT INTO AVAILABLE_TIME_SLOTS (TIME, SEMESTER, WEEKDAY, TUT_GTID) VALUES ((%s),(%s),(%s),(%s))",( "13:00:00",self.semester(), "M",self.iv))
+                 a5=c.execute("INSERT INTO AVAILABLE_TIME_SLOTS (TIME, SEMESTER, WEEKDAY, TUT_GTID) VALUES ((%s),(%s),(%s),(%s))",( "13:00:00",self.semester(), "M",str(self.iv.get())))
         if self.m2.get()==6:
-                 a6=c.execute("INSERT INTO AVAILABLE_TIME_SLOTS (TIME, SEMESTER, WEEKDAY, TUT_GTID) VALUES ((%s),(%s),(%s),(%s))", ("14:00:00",self.semester(), "M",self.iv))
+                 a6=c.execute("INSERT INTO AVAILABLE_TIME_SLOTS (TIME, SEMESTER, WEEKDAY, TUT_GTID) VALUES ((%s),(%s),(%s),(%s))", ("14:00:00",self.semester(), "M",str(self.iv.get())))
         if self.m3.get()==7:
-                 a7=c.execute("INSERT INTO AVAILABLE_TIME_SLOTS (TIME, SEMESTER, WEEKDAY, TUT_GTID) VALUES ((%s),(%s),(%s),(%s))", ("15:00:00",self.semester(), "M",self.iv))
+                 a7=c.execute("INSERT INTO AVAILABLE_TIME_SLOTS (TIME, SEMESTER, WEEKDAY, TUT_GTID) VALUES ((%s),(%s),(%s),(%s))", ("15:00:00",self.semester(), "M",str(self.iv.get())))
         if self.m4.get()==8:
-                 a8=c.execute("INSERT INTO AVAILABLE_TIME_SLOTS (TIME, SEMESTER, WEEKDAY, TUT_GTID) VALUES ((%s),(%s),(%s),(%s))", ("16:00:00",self.semester(), "M",self.iv))
+                 a8=c.execute("INSERT INTO AVAILABLE_TIME_SLOTS (TIME, SEMESTER, WEEKDAY, TUT_GTID) VALUES ((%s),(%s),(%s),(%s))", ("16:00:00",self.semester(), "M",str(self.iv.get())))
         if self.t9.get()==9:
-                 a9=c.execute("INSERT INTO AVAILABLE_TIME_SLOTS (TIME, SEMESTER, WEEKDAY, TUT_GTID) VALUES ((%s),(%s),(%s),(%s))", ("9:00:00",self.semester(), "T",self.iv))
+                 a9=c.execute("INSERT INTO AVAILABLE_TIME_SLOTS (TIME, SEMESTER, WEEKDAY, TUT_GTID) VALUES ((%s),(%s),(%s),(%s))", ("9:00:00",self.semester(), "T",str(self.iv.get())))
         if self.t10.get()==10:
-                 a10=c.execute("INSERT INTO AVAILABLE_TIME_SLOTS (TIME, SEMESTER, WEEKDAY, TUT_GTID) VALUES ((%s),(%s),(%s),(%s))", ("10:00:00",self.semester(), "T",self.iv))
+                 a10=c.execute("INSERT INTO AVAILABLE_TIME_SLOTS (TIME, SEMESTER, WEEKDAY, TUT_GTID) VALUES ((%s),(%s),(%s),(%s))", ("10:00:00",self.semester(), "T",str(self.iv.get())))
         if self.t11.get()==11:
-                 a11=c.execute("INSERT INTO AVAILABLE_TIME_SLOTS (TIME, SEMESTER, WEEKDAY, TUT_GTID) VALUES ((%s),(%s),(%s),(%s))", ("11:00:00",self.semester(), "T",self.iv))
+                 a11=c.execute("INSERT INTO AVAILABLE_TIME_SLOTS (TIME, SEMESTER, WEEKDAY, TUT_GTID) VALUES ((%s),(%s),(%s),(%s))", ("11:00:00",self.semester(), "T",str(self.iv.get())))
         if self.t12.get()==12:
-                 a12=c.execute("INSERT INTO AVAILABLE_TIME_SLOTS (TIME, SEMESTER, WEEKDAY, TUT_GTID) VALUES ((%s),(%s),(%s),(%s))", ("12:00:00",self.semester(), "T",self.iv))
+                 a12=c.execute("INSERT INTO AVAILABLE_TIME_SLOTS (TIME, SEMESTER, WEEKDAY, TUT_GTID) VALUES ((%s),(%s),(%s),(%s))", ("12:00:00",self.semester(), "T",str(self.iv.get())))
         if self.t1.get()==13:
-                 a13=c.execute("INSERT INTO AVAILABLE_TIME_SLOTS (TIME, SEMESTER, WEEKDAY, TUT_GTID) VALUES ((%s),(%s),(%s),(%s))", ("13:00:00",self.semester(), "T",self.iv))
+                 a13=c.execute("INSERT INTO AVAILABLE_TIME_SLOTS (TIME, SEMESTER, WEEKDAY, TUT_GTID) VALUES ((%s),(%s),(%s),(%s))", ("13:00:00",self.semester(), "T",str(self.iv.get())))
         if self.t2.get()==14:
-                 a14=c.execute("INSERT INTO AVAILABLE_TIME_SLOTS (TIME, SEMESTER, WEEKDAY, TUT_GTID) VALUES ((%s),(%s),(%s),(%s))",( "14:00:00",self.semester(), "T",self.iv))
+                 a14=c.execute("INSERT INTO AVAILABLE_TIME_SLOTS (TIME, SEMESTER, WEEKDAY, TUT_GTID) VALUES ((%s),(%s),(%s),(%s))",( "14:00:00",self.semester(), "T",str(self.iv.get())))
         if self.t3.get()==15:
-                 a15=c.execute("INSERT INTO AVAILABLE_TIME_SLOTS (TIME, SEMESTER, WEEKDAY, TUT_GTID) VALUES ((%s),(%s),(%s),(%s))", ("15:00:00",self.semester(), "T",self.iv))
+                 a15=c.execute("INSERT INTO AVAILABLE_TIME_SLOTS (TIME, SEMESTER, WEEKDAY, TUT_GTID) VALUES ((%s),(%s),(%s),(%s))", ("15:00:00",self.semester(), "T",str(self.iv.get())))
         if self.t4.get()==16:
-                 a16=c.execute("INSERT INTO AVAILABLE_TIME_SLOTS (TIME, SEMESTER, WEEKDAY, TUT_GTID) VALUES ((%s),(%s),(%s),(%s))", ("16:00:00",self.semester(), "T",self.iv))
+                 a16=c.execute("INSERT INTO AVAILABLE_TIME_SLOTS (TIME, SEMESTER, WEEKDAY, TUT_GTID) VALUES ((%s),(%s),(%s),(%s))", ("16:00:00",self.semester(), "T",str(self.iv.get())))
         if self.w9.get()==17:
-                 a17=c.execute("INSERT INTO AVAILABLE_TIME_SLOTS (TIME, SEMESTER, WEEKDAY, TUT_GTID) VALUES ((%s),(%s),(%s),(%s))", ("9:00:00",self.semester(), "W",self.iv))
+                 a17=c.execute("INSERT INTO AVAILABLE_TIME_SLOTS (TIME, SEMESTER, WEEKDAY, TUT_GTID) VALUES ((%s),(%s),(%s),(%s))", ("9:00:00",self.semester(), "W",str(self.iv.get())))
         if self.w10.get()==18:
-                 a18=c.execute("INSERT INTO AVAILABLE_TIME_SLOTS (TIME, SEMESTER, WEEKDAY, TUT_GTID) VALUES ((%s),(%s),(%s),(%s))",( "10:00:00",self.semester(), "W",self.iv))
+                 a18=c.execute("INSERT INTO AVAILABLE_TIME_SLOTS (TIME, SEMESTER, WEEKDAY, TUT_GTID) VALUES ((%s),(%s),(%s),(%s))",( "10:00:00",self.semester(), "W",str(self.iv.get())))
         if self.w11.get()==19:
-                 a19=c.execute("INSERT INTO AVAILABLE_TIME_SLOTS (TIME, SEMESTER, WEEKDAY, TUT_GTID) VALUES ((%s),(%s),(%s),(%s))",( "11:00:00",self.semester(), "W",self.iv))
+                 a19=c.execute("INSERT INTO AVAILABLE_TIME_SLOTS (TIME, SEMESTER, WEEKDAY, TUT_GTID) VALUES ((%s),(%s),(%s),(%s))",( "11:00:00",self.semester(), "W",str(self.iv.get())))
         if self.w12.get()==20:
-                 a20=c.execute("INSERT INTO AVAILABLE_TIME_SLOTS (TIME, SEMESTER, WEEKDAY, TUT_GTID) VALUES ((%s),(%s),(%s),(%s))", ("12:00:00",self.semester(), "W",self.iv))
+                 a20=c.execute("INSERT INTO AVAILABLE_TIME_SLOTS (TIME, SEMESTER, WEEKDAY, TUT_GTID) VALUES ((%s),(%s),(%s),(%s))", ("12:00:00",self.semester(), "W",str(self.iv.get())))
         if self.w1.get()==21:
-                 a21=c.execute("INSERT INTO AVAILABLE_TIME_SLOTS (TIME, SEMESTER, WEEKDAY, TUT_GTID) VALUES ((%s),(%s),(%s),(%s))", ("13:00:00",self.semester(), "W",self.iv))
+                 a21=c.execute("INSERT INTO AVAILABLE_TIME_SLOTS (TIME, SEMESTER, WEEKDAY, TUT_GTID) VALUES ((%s),(%s),(%s),(%s))", ("13:00:00",self.semester(), "W",str(self.iv.get())))
         if self.w2.get()==22:
-                 a22=c.execute("INSERT INTO AVAILABLE_TIME_SLOTS (TIME, SEMESTER, WEEKDAY, TUT_GTID) VALUES ((%s),(%s),(%s),(%s))", ("14:00:00",self.semester(), "W",self.iv))
+                 a22=c.execute("INSERT INTO AVAILABLE_TIME_SLOTS (TIME, SEMESTER, WEEKDAY, TUT_GTID) VALUES ((%s),(%s),(%s),(%s))", ("14:00:00",self.semester(), "W",str(self.iv.get())))
         if self.w3.get()==23:
-                 a23=c.execute("INSERT INTO AVAILABLE_TIME_SLOTS (TIME, SEMESTER, WEEKDAY, TUT_GTID) VALUES ((%s),(%s),(%s),(%s))", ("15:00:00",self.semester(), "W",self.iv))
+                 a23=c.execute("INSERT INTO AVAILABLE_TIME_SLOTS (TIME, SEMESTER, WEEKDAY, TUT_GTID) VALUES ((%s),(%s),(%s),(%s))", ("15:00:00",self.semester(), "W",str(self.iv.get())))
         if self.w4.get()==24:
-                 a24=c.execute("INSERT INTO AVAILABLE_TIME_SLOTS (TIME, SEMESTER, WEEKDAY, TUT_GTID) VALUES ((%s),(%s),(%s),(%s))", ("16:00:00",self.semester(), "W",self.iv))
+                 a24=c.execute("INSERT INTO AVAILABLE_TIME_SLOTS (TIME, SEMESTER, WEEKDAY, TUT_GTID) VALUES ((%s),(%s),(%s),(%s))", ("16:00:00",self.semester(), "W",str(self.iv.get())))
         if self.th9.get()==25:
-                 a25=c.execute("INSERT INTO AVAILABLE_TIME_SLOTS (TIME, SEMESTER, WEEKDAY, TUT_GTID) VALUES ((%s),(%s),(%s),(%s))", ("9:00:00",self.semester(), "Th",self.iv))
+                 a25=c.execute("INSERT INTO AVAILABLE_TIME_SLOTS (TIME, SEMESTER, WEEKDAY, TUT_GTID) VALUES ((%s),(%s),(%s),(%s))", ("9:00:00",self.semester(), "Th",str(self.iv.get())))
         if self.th10.get()==26:
-                 a26=c.execute("INSERT INTO AVAILABLE_TIME_SLOTS (TIME, SEMESTER, WEEKDAY, TUT_GTID) VALUES ((%s),(%s),(%s),(%s))", ("10:00:00",self.semester(), "Th",self.iv))
+                 a26=c.execute("INSERT INTO AVAILABLE_TIME_SLOTS (TIME, SEMESTER, WEEKDAY, TUT_GTID) VALUES ((%s),(%s),(%s),(%s))", ("10:00:00",self.semester(), "Th",str(self.iv.get())))
         if self.th11.get()==27:
-                 a27=c.execute("INSERT INTO AVAILABLE_TIME_SLOTS (TIME, SEMESTER, WEEKDAY, TUT_GTID) VALUES ((%s),(%s),(%s),(%s))", ("11:00:00",self.semester(), "Th",self.iv))
+                 a27=c.execute("INSERT INTO AVAILABLE_TIME_SLOTS (TIME, SEMESTER, WEEKDAY, TUT_GTID) VALUES ((%s),(%s),(%s),(%s))", ("11:00:00",self.semester(), "Th",str(self.iv.get())))
         if self.th12.get()==28:
-                 a28=c.execute("INSERT INTO AVAILABLE_TIME_SLOTS (TIME, SEMESTER, WEEKDAY, TUT_GTID) VALUES ((%s),(%s),(%s),(%s))", ("12:00:00",self.semester(), "Th",self.iv))
+                 a28=c.execute("INSERT INTO AVAILABLE_TIME_SLOTS (TIME, SEMESTER, WEEKDAY, TUT_GTID) VALUES ((%s),(%s),(%s),(%s))", ("12:00:00",self.semester(), "Th",str(self.iv.get())))
         if self.th1.get()==29:
-                 a29=c.execute("INSERT INTO AVAILABLE_TIME_SLOTS (TIME, SEMESTER, WEEKDAY, TUT_GTID) VALUES ((%s),(%s),(%s),(%s))", ("13:00:00",self.semester(), "Th",self.iv))
+                 a29=c.execute("INSERT INTO AVAILABLE_TIME_SLOTS (TIME, SEMESTER, WEEKDAY, TUT_GTID) VALUES ((%s),(%s),(%s),(%s))", ("13:00:00",self.semester(), "Th",str(self.iv.get())))
         if self.th2.get()==30:
-                 a30=c.execute("INSERT INTO AVAILABLE_TIME_SLOTS (TIME, SEMESTER, WEEKDAY, TUT_GTID) VALUES ((%s),(%s),(%s),(%s))", ("14:00:00",self.semester(), "Th",self.iv))
+                 a30=c.execute("INSERT INTO AVAILABLE_TIME_SLOTS (TIME, SEMESTER, WEEKDAY, TUT_GTID) VALUES ((%s),(%s),(%s),(%s))", ("14:00:00",self.semester(), "Th",str(self.iv.get())))
         if self.th3.get()==31:
-                 a31=c.execute("INSERT INTO AVAILABLE_TIME_SLOTS (TIME, SEMESTER, WEEKDAY, TUT_GTID) VALUES ((%s),(%s),(%s),(%s))", ("15:00:00",self.semester(), "Th",self.iv))
+                 a31=c.execute("INSERT INTO AVAILABLE_TIME_SLOTS (TIME, SEMESTER, WEEKDAY, TUT_GTID) VALUES ((%s),(%s),(%s),(%s))", ("15:00:00",self.semester(), "Th",str(self.iv.get())))
         if self.th4.get()==32:
-                 a32=c.execute("INSERT INTO AVAILABLE_TIME_SLOTS (TIME, SEMESTER, WEEKDAY, TUT_GTID) VALUES ((%s),(%s),(%s),(%s))", ("16:00:00",self.semester(), "Th",self.iv))
+                 a32=c.execute("INSERT INTO AVAILABLE_TIME_SLOTS (TIME, SEMESTER, WEEKDAY, TUT_GTID) VALUES ((%s),(%s),(%s),(%s))", ("16:00:00",self.semester(), "Th",str(self.iv.get())))
         if self.f9.get()==33:
-                 a33=c.execute("INSERT INTO AVAILABLE_TIME_SLOTS (TIME, SEMESTER, WEEKDAY, TUT_GTID) VALUES ((%s),(%s),(%s),(%s))", ("9:00:00",self.semester(), "F",self.iv))
+                 a33=c.execute("INSERT INTO AVAILABLE_TIME_SLOTS (TIME, SEMESTER, WEEKDAY, TUT_GTID) VALUES ((%s),(%s),(%s),(%s))", ("9:00:00",self.semester(), "F",str(self.iv.get())))
         if self.f10.get()==34:
-                 a34=c.execute("INSERT INTO AVAILABLE_TIME_SLOTS (TIME, SEMESTER, WEEKDAY, TUT_GTID) VALUES ((%s),(%s),(%s),(%s))", ("10:00:00",self.semester(), "F",self.iv))
+                 a34=c.execute("INSERT INTO AVAILABLE_TIME_SLOTS (TIME, SEMESTER, WEEKDAY, TUT_GTID) VALUES ((%s),(%s),(%s),(%s))", ("10:00:00",self.semester(), "F",str(self.iv.get())))
         if self.f11.get()==35:
-                 a35=c.execute("INSERT INTO AVAILABLE_TIME_SLOTS (TIME, SEMESTER, WEEKDAY, TUT_GTID) VALUES ((%s),(%s),(%s),(%s))",( "11:00:00",self.semester(), "F",self.iv))
+                 a35=c.execute("INSERT INTO AVAILABLE_TIME_SLOTS (TIME, SEMESTER, WEEKDAY, TUT_GTID) VALUES ((%s),(%s),(%s),(%s))",( "11:00:00",self.semester(), "F",str(self.iv.get())))
         if self.f12.get()==36:
-                 a36=c.execute("INSERT INTO AVAILABLE_TIME_SLOTS (TIME, SEMESTER, WEEKDAY, TUT_GTID) VALUES ((%s),(%s),(%s),(%s))", ("12:00:00",self.semester(), "F",self.iv))
+                 a36=c.execute("INSERT INTO AVAILABLE_TIME_SLOTS (TIME, SEMESTER, WEEKDAY, TUT_GTID) VALUES ((%s),(%s),(%s),(%s))", ("12:00:00",self.semester(), "F",str(self.iv.get())))
         if self.f1.get()==37:
-                 a37=c.execute("INSERT INTO AVAILABLE_TIME_SLOTS (TIME, SEMESTER, WEEKDAY, TUT_GTID) VALUES ((%s),(%s),(%s),(%s))",( "13:00:00",self.semester(), "F",self.iv))
+                 a37=c.execute("INSERT INTO AVAILABLE_TIME_SLOTS (TIME, SEMESTER, WEEKDAY, TUT_GTID) VALUES ((%s),(%s),(%s),(%s))",( "13:00:00",self.semester(), "F",str(self.iv.get())))
         if self.f2.get()==38:
-                 a38=c.execute("INSERT INTO AVAILABLE_TIME_SLOTS (TIME, SEMESTER, WEEKDAY, TUT_GTID) VALUES ((%s),(%s),(%s),(%s))", ("14:00:00",self.semester(), "F",self.iv))
+                 a38=c.execute("INSERT INTO AVAILABLE_TIME_SLOTS (TIME, SEMESTER, WEEKDAY, TUT_GTID) VALUES ((%s),(%s),(%s),(%s))", ("14:00:00",self.semester(), "F",str(self.iv.get())))
         if self.f3.get()==39:
-                 a39=c.execute("INSERT INTO AVAILABLE_TIME_SLOTS (TIME, SEMESTER, WEEKDAY, TUT_GTID) VALUES ((%s),(%s),(%s),(%s))", ("15:00:00",self.semester(), "F",self.iv))
+                 a39=c.execute("INSERT INTO AVAILABLE_TIME_SLOTS (TIME, SEMESTER, WEEKDAY, TUT_GTID) VALUES ((%s),(%s),(%s),(%s))", ("15:00:00",self.semester(), "F",str(self.iv.get())))
         if self.f4.get()==40:
-                 a40=c.execute("INSERT INTO AVAILABLE_TIME_SLOTS (TIME, SEMESTER, WEEKDAY, TUT_GTID) VALUES ((%s),(%s),(%s),(%s))", ("16:00:00",self.semester(), "F",self.iv))
+                 a40=c.execute("INSERT INTO AVAILABLE_TIME_SLOTS (TIME, SEMESTER, WEEKDAY, TUT_GTID) VALUES ((%s),(%s),(%s),(%s))", ("16:00:00",self.semester(), "F",str(self.iv.get())))
                 
 
     def cancel(self):
