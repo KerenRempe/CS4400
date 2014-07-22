@@ -60,7 +60,7 @@ class poop:
         l2.grid(row=3, column=0, sticky=E+W)
         b=Button(self.win1, text="Apply to be a tutor", command=self.apply)
         b.grid(row=4,column=0, sticky=E+W)
-        b3=Button(self.win1, text="Find my Schedule")
+        b3=Button(self.win1, text="Find my Schedule", command=self.findmysched)
         b3.grid(row=4, column=1, sticky=E+W)
         l3=Label(self.win1, text="Professor Options")
         l3.grid(row=5, column=0, sticky=E+W)
@@ -68,9 +68,9 @@ class poop:
         b4.grid(row=6, column=0, sticky=E+W)
         l4=Label(self.win1, text="Administrator Options")
         l4.grid(row=7, column=0, sticky=E+W)
-        b5=Button(self.win1, text="Summary 1", command=self.summ1)
+        b5=Button(self.win1, text="Summary 1", command=self.sum1)
         b5.grid(row=8, column=0, sticky=E+W)
-        b6=Button(self.win1, text="Summary 2")
+        b6=Button(self.win1, text="Summary 2", command=self.sum2)
         b6.grid(row=8, column=1, sticky=E+W)
         b7=Button(self.win1, text="Exit", command=self.exit)
         b7.grid(row=9, column=0, sticky=E+W)
@@ -107,33 +107,48 @@ class poop:
             return('Fall 2016')
 
     def search(self):
+        c=self.db.cursor()
+        nn=c.execute("SELECT STUD_GTID FROM STUDENT")
+        nn=c.fetchall()
+        toned=[]
         self.win4=Toplevel()
         self.win4.title("Search/Schedule a Tutor")
         self.win1.withdraw()
-        l=Label(self.win4, text="Select a Course.")
-        l.grid(row=0, column=0, sticky=E+W)
-        l1=Label(self.win4, text="School Number")
-        l1.grid(row=1, column=0, sticky=E+W)
-        c=self.db.cursor()
-        o=c.execute("SELECT * FROM COURSE")
-        self.o=c.fetchall()
-        self.count=0
-        r=2
-        self.iv6=IntVar()
-        for i in self.o:
-            co=str(i[1])+" "+str(i[0])
-            rb="rb"+str(self.count)
-            rb=Radiobutton(self.win4, text=co, value=self.count, variable=self.iv6)
-            rb.grid(row=r, column=0, sticky=E+W)
-            self.count=self.count+1
+        for i in nn:
+            for y in i:
+                toned.append(y)
+        if self.iv.get() not in toned:
+            messagebox.showinfo(title="None of your beeswax!", message="This function is only allowed for students.")
+            self.win4.withdraw()
+            self.Mainmenu()
+        else:
+            self.win4=Toplevel()
+            self.win4.title("Search/Schedule a Tutor")
+            self.win1.withdraw()
+            l=Label(self.win4, text="Select a Course.")
+            l.grid(row=0, column=0, sticky=E+W)
+            l1=Label(self.win4, text="School Number")
+            l1.grid(row=1, column=0, sticky=E+W)
+            c=self.db.cursor()
+            o=c.execute("SELECT * FROM COURSE")
+            self.o=c.fetchall()
+            self.count=1
+            r=2
+            self.iv6=IntVar()
+            for i in self.o:
+                co=str(i[1])+" "+str(i[0])
+                rb="rb"+str(self.count)
+                rb=Radiobutton(self.win4, text=co, value=self.count, variable=self.iv6)
+                rb.grid(row=r, column=0, sticky=E+W)
+                self.count=self.count+1
+                r=r+1
             r=r+1
-        r=r+1
-        b=Button(self.win4, text="Select Course", command=self.search1)
-        b.grid(row=r, column=0, sticky=E+W)
-        self.thisistherow=r
-        r=r+1
-        b1=Button(self.win4, text="Cancel", command=self.endsearch)
-        b1.grid(row=r, column=0, sticky=E+W)
+            b=Button(self.win4, text="Select Course", command=self.search1)
+            b.grid(row=r, column=0, sticky=E+W)
+            self.thisistherow=r
+            r=r+1
+            b1=Button(self.win4, text="Cancel", command=self.endsearch)
+            b1.grid(row=r, column=0, sticky=E+W)
         
     def endsearch(self):
         self.win4.withdraw()
@@ -215,56 +230,68 @@ class poop:
             gtid=n[7]
             c=self.db.cursor()
             try:
-                l=c.execute("INSERT INTO CHOOSES (UGRAD_GTID, SCHOOL, COURSE_NUM, TIME, WEEKDAY, SEMESTER, TUT_GTID) VALUES ((%s),(%s),(%s),(%s),(%s),(%s),(%s))",(str(self.iv), str(self.co), str(self.nu), str(self.time), str(self.weekday), str(s), str(gtid)))
+                l=c.execute("INSERT INTO CHOOSES (UGRAD_GTID, SCHOOL, COURSE_NUM, TIME, WEEKDAY, SEMESTER, TUT_GTID) VALUES ((%s),(%s),(%s),(%s),(%s),(%s),(%s))",(str(self.iv.get()), str(self.co.get()), str(self.nu.get()), str(self.time.get()), str(self.weekday.get()), str(s), str(gtid)))
             except:
                 messagebox.showinfo(message="Unfortuantely that particular time has already been taken for that particular tutor. Please Select a different time or tutor.")
         
         
     def apply(self):
+        c=self.db.cursor()
+        nn=c.execute("SELECT STUD_GTID FROM STUDENT")
+        nn=c.fetchall()
+        toned=[]
         self.win2=Toplevel()
         self.win2.title("Apply to be a Tutor")
         self.win1.withdraw()
-        self.gtid=IntVar()
-        self.fn=StringVar()
-        self.ln=StringVar()
-        self.email=StringVar()
-        self.gpa=StringVar()
-        self.telephone=IntVar()
-        self.el=IntVar()
-        l=Label(self.win2, text="Georgia Tech ID")
-        l.grid(row=0, column=0, sticky=E+W)
-        l1=Label(self.win2, text="First Name")
-        l1.grid(row=1, column=0, sticky=E+W)
-        l2=Label(self.win2, text="Last Name")
-        l2.grid(row=2, column=0, sticky=E+W)
-        l3=Label(self.win2, text="E-mail")
-        l3.grid(row=3, column=0, sticky=E+W)
-        l4=Label(self.win2, text="GPA")
-        l4.grid(row=4, column=0, sticky=E+W)
-        l5=Label(self.win2, text="Telephone Number")
-        l5.grid(row=5, column=0, sticky=E+W)
-        e=Entry(self.win2, textvariable=self.gtid)
-        e.grid(row=0, column=1, sticky=E+W)
-        e.delete(0, END)
-        e1=Entry(self.win2, textvariable=self.fn)
-        e1.grid(row=1, column=1, sticky=E+W)
-        e2=Entry(self.win2, textvariable=self.ln)
-        e2.grid(row=2, column=1, sticky=E+W)
-        e3=Entry(self.win2, textvariable=self.email)
-        e3.grid(row=3, column=1, sticky=E+W)
-        e4=Entry(self.win2, textvariable=self.gpa)
-        e4.grid(row=4, column=1, sticky=E+W)
-        e5=Entry(self.win2, textvariable=self.telephone)
-        e5.grid(row=5, column=1, sticky=E+W)
-        e5.delete(0, END)
-        rb=Radiobutton(self.win2, text="Undergraduate", variable=self.el, value=1)
-        rb.grid(row=6, column=0, sticky=E+W)
-        rb1=Radiobutton(self.win2, text="Graduate", variable=self.el, value=2)
-        rb1.grid(row=7, column=0, sticky=E+W)
-        b=Button(self.win2, text="Okay", command=self.insertApp)
-        b.grid(row=9, column=1, sticky=E+W)
-        b1=Button(self.win2, text="Cancel", command=self.cancel)
-        b1.grid(row=9, column=0, sticky=E+W) 
+        for i in nn:
+            for y in i:
+                toned.append(y)
+        if self.iv.get() not in toned:
+            messagebox.showinfo(title="None of your beeswax!", message="This function is only allowed for students.")
+            self.win2.withdraw()
+            self.Mainmenu()
+        else:
+            self.gtid=IntVar()
+            self.fn=StringVar()
+            self.ln=StringVar()
+            self.email=StringVar()
+            self.gpa=StringVar()
+            self.telephone=IntVar()
+            self.el=IntVar()
+            l=Label(self.win2, text="Georgia Tech ID")
+            l.grid(row=0, column=0, sticky=E+W)
+            l1=Label(self.win2, text="First Name")
+            l1.grid(row=1, column=0, sticky=E+W)
+            l2=Label(self.win2, text="Last Name")
+            l2.grid(row=2, column=0, sticky=E+W)
+            l3=Label(self.win2, text="E-mail")
+            l3.grid(row=3, column=0, sticky=E+W)
+            l4=Label(self.win2, text="GPA")
+            l4.grid(row=4, column=0, sticky=E+W)
+            l5=Label(self.win2, text="Telephone Number")
+            l5.grid(row=5, column=0, sticky=E+W)
+            e=Entry(self.win2, textvariable=self.gtid)
+            e.grid(row=0, column=1, sticky=E+W)
+            e.delete(0, END)
+            e1=Entry(self.win2, textvariable=self.fn)
+            e1.grid(row=1, column=1, sticky=E+W)
+            e2=Entry(self.win2, textvariable=self.ln)
+            e2.grid(row=2, column=1, sticky=E+W)
+            e3=Entry(self.win2, textvariable=self.email)
+            e3.grid(row=3, column=1, sticky=E+W)
+            e4=Entry(self.win2, textvariable=self.gpa)
+            e4.grid(row=4, column=1, sticky=E+W)
+            e5=Entry(self.win2, textvariable=self.telephone)
+            e5.grid(row=5, column=1, sticky=E+W)
+            e5.delete(0, END)
+            rb=Radiobutton(self.win2, text="Undergraduate", variable=self.el, value=1)
+            rb.grid(row=6, column=0, sticky=E+W)
+            rb1=Radiobutton(self.win2, text="Graduate", variable=self.el, value=2)
+            rb1.grid(row=7, column=0, sticky=E+W)
+            b=Button(self.win2, text="Okay", command=self.insertApp)
+            b.grid(row=9, column=1, sticky=E+W)
+            b1=Button(self.win2, text="Cancel", command=self.cancel)
+            b1.grid(row=9, column=0, sticky=E+W) 
 
     def insertApp(self):
         #check you can insert info
@@ -276,7 +303,6 @@ class poop:
         email=self.email.get()
         gpa=self.gpa.get()
         tn=self.telephone.get()
-        print(tn)
         el=self.el.get()
         if gtid!=self.iv.get():
             messagebox.showinfo(message="An individual cannot apply for another individual.")
@@ -296,52 +322,151 @@ class poop:
             messagebox.showinfo(message="You are already a tutor! Congrats!")
             self.killthiswin()
         if float(gpa)<3.0:
-            messagebox.showinfo(message="Your GPA does not meet the 3.0 minimum.")
-        i=c.execute("INSERT INTO TUTOR (TUT_GTID, TELEPHONE, GPA) VALUES ((%s), (%s), (%s))", (str(gtid), str(tn), str(gpa))) 
-        if self.el.get()==2:
-            p=c.execute("INSERT INTO GRAD (GRAD_GTID) VALUES (%s)", str(gtid))
-            self.win2.withdraw()
-            self.win3=Toplevel()
-            self.win3.title("Graduate TA")
-            c=self.db.cursor()
-            courses=c.execute("SELECT * FROM COURSE")
-            courses=c.fetchall()
-            l=Label(self.win3, text="If you were a Graduate TA select the School and Course")
-            l.grid(row=0, column=0, sticky=E+W)
-            count=1
-            r=1
-            # YOU CAN SELECT MORE THAN ONE NEED TO CHANGE
-            self.courseandvar={}
-            # course name: value of rb, variable
-            #'MATH 3012': [1, 'self.1butt']
-            for i in courses:
-                co=str(i[1])+" "+str(i[0])
-                rb="rb"+str(count)
-                duh="self."+str(count)+"butt"
-                rb=Radiobutton(self.win3, text=co, value=count, variable=duh)
-                rb.grid(row=r, column=0, sticky=E+W)
-                self.courseandvar[co]=[count, duh, i[1], i[0]]
-                count=count+1
-                r=r+1
-            b=Button(self.win3, text="Select", command=self.insertapp2)
-            b.grid(row=r, column=0, sticky=E+W)
-        if self.el.get()==1:
-            tt=c.execute("INSERT INTO UNDERGRAD (UGRAD_GTID) VALUES (%s)", str(gtid))
-            self.insertapp2()
+            messagebox.showinfo(title="You are subpar...", message="Your GPA does not meet the 3.0 minimum.")
+        try:
+            i=c.execute("INSERT INTO TUTOR (TUT_GTID, TELEPHONE, GPA) VALUES ((%s), (%s), (%s))", (str(gtid), str(tn), str(gpa))) 
+            if self.el.get()==2:
+                p=c.execute("INSERT INTO GRAD (GRAD_GTID) VALUES (%s)", str(gtid))
+                self.win2.withdraw()
+                self.win3=Toplevel()
+                self.win3.title("Graduate TA")
+                c=self.db.cursor()
+                courses=c.execute("SELECT * FROM COURSE")
+                courses=c.fetchall()
+                l=Label(self.win3, text="Select the School and Course that you want to tutor.")
+                l.grid(row=0, column=0, sticky=E+W)
+                self.meg=IntVar()
+                self.csg=IntVar()
+                self.mathg=IntVar()
+                self.ieg=IntVar()
+                self.cssg=IntVar()
+                self.musig=IntVar()
+                self.MEG=IntVar()
+                self.CSG=IntVar()
+                self.MATHG=IntVar()
+                self.IEG=IntVar()
+                self.CSSG=IntVar()
+                self.MUSIG=IntVar()
+                rb=Radiobutton(self.win3, text="ME 2110", variable=self.meg, value=1)
+                rb.grid(row=1, column=0, sticky=E+W)
+                rb=Radiobutton(self.win3, text="CS 2200", variable=self.csg, value=2)
+                rb.grid(row=2, column=0, sticky=E+W)
+                rb=Radiobutton(self.win3, text="MATH 3012", variable=self.mathg, value=3)
+                rb.grid(row=3, column=0, sticky=E+W)
+                rb=Radiobutton(self.win3, text="IE 3232", variable=self.ieg, value=4)
+                rb.grid(row=4, column=0, sticky=E+W)
+                rb=Radiobutton(self.win3, text="CS 4400", variable=self.cssg, value=5)
+                rb.grid(row=5, column=0, sticky=E+W)
+                rb=Radiobutton(self.win3, text="MUSI 4630", variable=self.musig, value=6)
+                rb.grid(row=6, column=0, sticky=E+W)
+                l2=Label(self.win3, text="Select the School and Course that you have been a GTA for in the past.")
+                l2.grid(row=0, column=1, sticky=E+W)
+                rb=Radiobutton(self.win3, text="ME 2110", variable=self.MEG, value=1)
+                rb.grid(row=1, column=1, sticky=E+W)
+                rb=Radiobutton(self.win3, text="CS 2200", variable=self.CSG, value=2)
+                rb.grid(row=2, column=1, sticky=E+W)
+                rb=Radiobutton(self.win3, text="MATH 3012", variable=self.MATHG, value=3)
+                rb.grid(row=3, column=1, sticky=E+W)
+                rb=Radiobutton(self.win3, text="IE 3232", variable=self.IEG, value=4)
+                rb.grid(row=4, column=1, sticky=E+W)
+                rb=Radiobutton(self.win3, text="CS 4400", variable=self.CSSG, value=5)
+                rb.grid(row=5, column=1, sticky=E+W)
+                rb=Radiobutton(self.win3, text="MUSI 4630", variable=self.MUSIG, value=6)
+                rb.grid(row=6, column=1, sticky=E+W)
+                b=Button(self.win3, text="Select", command=self.destinyschild)
+                b.grid(row=7, column=0, sticky=E+W)
+                
+            if self.el.get()==1:
+                tt=c.execute("INSERT INTO UNDERGRAD (UGRAD_GTID) VALUES (%s)", str(gtid))
+                self.win2.withdraw()
+                self.win3=Toplevel()
+                self.win3.title("Undergraduate TA")
+                c=self.db.cursor()
+                courses=c.execute("SELECT * FROM COURSE")
+                courses=c.fetchall()
+                l=Label(self.win3, text="Select the School and Course you can tutor.")
+                l.grid(row=0, column=0, sticky=E+W)
+                #((2110, 'ME'), (2200, 'CS'), (3012, 'MATH'), (3232, 'IE'), (4400, 'CS'), (4630, 'MUSI'))
+                self.meg=IntVar()
+                self.csg=IntVar()
+                self.mathg=IntVar()
+                self.ieg=IntVar()
+                self.cssg=IntVar()
+                self.musig=IntVar()
+                rb=Radiobutton(self.win3, text="ME 2110", variable=self.meg, value=1)
+                rb.grid(row=1, column=0, sticky=E+W)
+                rb=Radiobutton(self.win3, text="CS 2200", variable=self.csg, value=2)
+                rb.grid(row=2, column=0, sticky=E+W)
+                rb=Radiobutton(self.win3, text="MATH 3012", variable=self.mathg, value=3)
+                rb.grid(row=3, column=0, sticky=E+W)
+                rb=Radiobutton(self.win3, text="IE 3232", variable=self.ieg, value=4)
+                rb.grid(row=4, column=0, sticky=E+W)
+                rb=Radiobutton(self.win3, text="CS 4400", variable=self.cssg, value=5)
+                rb.grid(row=5, column=0, sticky=E+W)
+                rb=Radiobutton(self.win3, text="MUSI 4630", variable=self.musig, value=6)
+                rb.grid(row=6, column=0, sticky=E+W)
+                b=Button(self.win3, text="Select", command=self.beyonce)
+                b.grid(row=7, column=0, sticky=E+W)
+        except:
+            messagebox.showinfo(title="Oh no!", message="You can only apply to be a tutor once!")
+            self.killthiswin()
+            
+    def beyonce(self):
+        c=self.db.cursor()
+        if self.meg.get()==1:
+            a=c.execute("INSERT INTO TUTORS (TUT_GTID, SCHOOL, COURSE_NUM, GTA) VALUES ((%s),(%s),(%s),(%s))",(str(self.iv.get()), "ME", "2110", str(0)))
+        if self.csg.get()==2:
+            a=c.execute("INSERT INTO TUTORS (TUT_GTID, SCHOOL, COURSE_NUM, GTA) VALUES ((%s),(%s),(%s),(%s))",(str(self.iv.get()), "CS", "2200", str(0)))
+        if self.mathg.get()==3:
+            a=c.execute("INSERT INTO TUTORS (TUT_GTID, SCHOOL, COURSE_NUM, GTA) VALUES ((%s),(%s),(%s),(%s))",(str(self.iv.get()), "MATH", "3012", str(0)))
+        if self.ieg.get()==4:
+            a=c.execute("INSERT INTO TUTORS (TUT_GTID, SCHOOL, COURSE_NUM, GTA) VALUES ((%s),(%s),(%s),(%s))",(str(self.iv.get()), "IE", "3232", str(0)))        
+        if self.cssg.get()==5:
+            a=c.execute("INSERT INTO TUTORS (TUT_GTID, SCHOOL, COURSE_NUM, GTA) VALUES ((%s),(%s),(%s),(%s))",(str(self.iv.get()), "CS", "4400", str(0)))
+        if self.musig.get()==6:
+            a=c.execute("INSERT INTO TUTORS (TUT_GTID, SCHOOL, COURSE_NUM, GTA) VALUES ((%s),(%s),(%s),(%s))",(str(self.iv.get()), "MUSI", "4630", str(0)))
+        if self.meg.get()==0 and self.csg.get()==0 and self.mathg.get()==0 and self.ieg.get()==0 and self.cssg.get()==0 and self.musig.get()==0:
+            messagebox.showinfo(title="Oh no you didn't!", message="You have to select at least one course you can tutor.")
+        self.insertapp2()
 
+
+    def destinyschild(self):
+        c=self.db.cursor()
+        if self.meg.get()==1 and self.MEG.get()==0:
+            a=c.execute("INSERT INTO TUTORS (TUT_GTID, SCHOOL, COURSE_NUM, GTA) VALUES ((%s),(%s),(%s),(%s))",(str(self.iv.get()), "ME", "2110", str(0)))
+        if self.meg.get()==1 and self.MEG.get()==1:
+            a=c.execute("INSERT INTO TUTORS (TUT_GTID, SCHOOL, COURSE_NUM, GTA) VALUES ((%s),(%s),(%s),(%s))",(str(self.iv.get()), "ME", "2110", str(1)))
+        if self.csg.get()==2 and self.CSG.get()==0:
+            a=c.execute("INSERT INTO TUTORS (TUT_GTID, SCHOOL, COURSE_NUM, GTA) VALUES ((%s),(%s),(%s),(%s))",(str(self.iv.get()), "CS", "2200", str(0)))
+        if self.csg.get()==2 and self.CSG.get()==2:
+            a=c.execute("INSERT INTO TUTORS (TUT_GTID, SCHOOL, COURSE_NUM, GTA) VALUES ((%s),(%s),(%s),(%s))",(str(self.iv.get()), "CS", "2200", str(1)))
+        if self.mathg.get()==3 and self.MATHG.get()==0:
+            a=c.execute("INSERT INTO TUTORS (TUT_GTID, SCHOOL, COURSE_NUM, GTA) VALUES ((%s),(%s),(%s),(%s))",(str(self.iv.get()), "MATH", "3012", str(0)))
+        if self.mathg.get()==3 and self.MATHG.get()==3:
+            a=c.execute("INSERT INTO TUTORS (TUT_GTID, SCHOOL, COURSE_NUM, GTA) VALUES ((%s),(%s),(%s),(%s))",(str(self.iv.get()), "MATH", "3012", str(1)))
+        if self.ieg.get()==4 and self.IEG.get()==0:
+            a=c.execute("INSERT INTO TUTORS (TUT_GTID, SCHOOL, COURSE_NUM, GTA) VALUES ((%s),(%s),(%s),(%s))",(str(self.iv.get()), "IE", "3232", str(0)))
+        if self.ieg.get()==4 and self.IEG.get()==4:
+            a=c.execute("INSERT INTO TUTORS (TUT_GTID, SCHOOL, COURSE_NUM, GTA) VALUES ((%s),(%s),(%s),(%s))",(str(self.iv.get()), "IE", "3232", str(1)))  
+        if self.cssg.get()==5 and self.CSSG.get()==0:
+            a=c.execute("INSERT INTO TUTORS (TUT_GTID, SCHOOL, COURSE_NUM, GTA) VALUES ((%s),(%s),(%s),(%s))",(str(self.iv.get()), "CS", "4400", str(0)))
+        if self.cssg.get()==5 and self.CSSG.get()==5:
+            a=c.execute("INSERT INTO TUTORS (TUT_GTID, SCHOOL, COURSE_NUM, GTA) VALUES ((%s),(%s),(%s),(%s))",(str(self.iv.get()), "CS", "4400", str(1)))
+        if self.musig.get()==6 and self.MUSIG.get()==0:
+            a=c.execute("INSERT INTO TUTORS (TUT_GTID, SCHOOL, COURSE_NUM, GTA) VALUES ((%s),(%s),(%s),(%s))",(str(self.iv.get()), "MUSI", "4630", str(0)))
+        if self.musig.get()==6 and self.MUSIG.get()==6:
+            a=c.execute("INSERT INTO TUTORS (TUT_GTID, SCHOOL, COURSE_NUM, GTA) VALUES ((%s),(%s),(%s),(%s))",(str(self.iv.get()), "MUSI", "4630", str(1)))
+        if self.meg.get()==0 and self.csg.get()==0 and self.mathg.get()==0 and self.ieg.get()==0 and self.cssg.get()==0 and self.musig.get()==0:
+            messagebox.showinfo(title="Oh no you didn't!", message="You have to select at least one course you can tutor.")
+        self.insertapp2()
+        
     def killthiswin(self):
-        self.win3.withdraw()
+        self.win2.withdraw()
         self.Mainmenu()
 
     def insertapp2(self):
+        self.win3.withdraw()
         c=self.db.cursor()
-        if self.el.get()==2:
-            checklist=self.courseandvar.values()
-            for i in checklist:
-                app=exec(i[1].get())
-                if i[0]==app:
-                    h=c.execute("INSERT INTO TUTORS (TUT_GTID, SCHOOL, COURSE_NUM, GTA) VALUES ((%s),(%s),(%s),(%s))", self.iv, i[1], i[2], "TRUE")  
-            #EACH RADIO BUTTON HAS ITS OWN VARIABLE BECAUSE CAN BE MULTIPLE CHOICE
         self.win2.withdraw()
         self.win6=Toplevel()
         self.win6.title("Available Days/Times")
@@ -524,7 +649,6 @@ class poop:
         self.f3.set(0)
         self.f4.set(0)
 
-
     def insertapp3(self):
         c=self.db.cursor()
         adict={1: 'self.m9.get()', 2: 'self.m10.get()', 3: 'self.m11.get()', 4: 'self.m12.get()', 5: 'self.m1.get()', 6: 'self.m2.get()', 7: 'self.m3.get()', 8: 'self.m4.get()', 9: 'self.t9.get()', 10: 'self.t10.get()', 11: 'self.t11.get()', 12: 'self.t12.get()', 13: 'self.t1.get()', 14: 'self.t2.get()', 15: 'self.t3.get()', 16: 'self.t4.get()', 17: 'self.w9.get()', 18: 'self.w10.get()', 19: 'self.w11.get()', 20: 'self.w12.get()', 21: 'self.w1.get()', 22: 'self.w2.get()', 23: 'self.w3.get()', 24: 'self.w4.get()', 25: 'self.th9.get()', 26: 'self.th10.get()', 27: 'self.th11.get()', 28: 'self.th12.get()', 29: 'self.th1.get()', 30: 'self.th2.get()', 31: 'self.th3.get()', 32: 'self.th4.get()', 33: 'self.f9.get()', 34: 'self.f10.get()', 35: 'self.f11.get()', 36: 'self.f12.get()', 37: 'self.f1.get()', 38: 'self.f2.get()', 39: 'self.f3.get()', 40: 'self.f4.get()'}
@@ -608,7 +732,8 @@ class poop:
                  a39=c.execute("INSERT INTO AVAILABLE_TIME_SLOTS (TIME, SEMESTER, WEEKDAY, TUT_GTID) VALUES ((%s),(%s),(%s),(%s))", ("15:00:00",self.semester(), "F",str(self.iv.get())))
         if self.f4.get()==40:
                  a40=c.execute("INSERT INTO AVAILABLE_TIME_SLOTS (TIME, SEMESTER, WEEKDAY, TUT_GTID) VALUES ((%s),(%s),(%s),(%s))", ("16:00:00",self.semester(), "F",str(self.iv.get())))
-                
+        self.win6.withdraw()
+        self.Mainmenu()
 
     def cancel(self):
         self.win2.withdraw()
@@ -625,8 +750,6 @@ class poop:
         for i in j:
             for q in i:
                 alist.append(q)
-        print(self.iv.get())
-        print(alist)
         if self.iv.get() not in alist:
             messagebox.showinfo(message="You must be a undergraduate student to rate a tutor.")
         o=c.execute("SELECT COURSE_NUM, SCHOOL FROM CHOOSES WHERE UGRAD_GTID=(%s)", self.iv.get())
@@ -634,10 +757,11 @@ class poop:
         blist=[]
         for i in self.o:
             for q in i:
-                blist.append(q)
-        print(blist)        
+                blist.append(q)       
         if len(blist)==0:
             messagebox.showinfo(message="You have not had a tutoring session yet and therefore can't rate a tutor.")
+            self.win5.withdraw()
+            self.Mainmenu()
         self.count=1
         r=1
         self.iv6=IntVar()
@@ -667,23 +791,16 @@ class poop:
         co=self.o[position][1]
         num=self.o[position][0]
         c=self.db.cursor()
-        #this SQL doesn't work
-        print(str(self.iv.get()))
-        print(str(co))
-        print(str(num))
-        n=c.execute("SELECT FNAME, LNAME, STUD_GTID FROM STUDENT INNER JOIN CHOOSES ON STUDENT.STUD_GTID=CHOOSES.UGRAD_GTID WHERE UGRAD_GTID=(%s) AND SCHOOL=(%s) AND COURSE_NUM=(%s)", (str(self.iv.get()), str(co), str(num)))
+        n=c.execute("SELECT FNAME, LNAME, TUT_GTID FROM STUDENT INNER JOIN CHOOSES ON STUDENT.STUD_GTID=CHOOSES.TUT_GTID WHERE UGRAD_GTID=(%s) AND SCHOOL=(%s) AND COURSE_NUM=(%s)", (str(self.iv.get()), str(co), str(num)))
         n=c.fetchall()
         self.n=n
-        print(n)
         self.r=0
         l=Label(self.win5, text="Tutor Name")
         l.grid(column=1, row=self.r, sticky=E+W)
         count=1
         self.iv7=IntVar()
         self.r=self.r+1
-        print(n)
         for i in n:
-            print(i)
             name=str(i[0])+" "+str(i[1])
             rb="rb"+str(count)
             rb=Radiobutton(self.win5, text=name, value=count, variable=self.iv7)
@@ -717,11 +834,9 @@ class poop:
         b.grid(column=2, row=7, sticky=W)
 
     def rate3(self):
-        #INSERT ALL THE INFO if none of it is empty
         if self.descript.get()=="" or self.numet.get()==0:
             messagebox.showinfo(message="You have not filled in all the fields.")
         else:
-            #COURSE_NUM, SCHOOL & self.o is the tuple & self.iv6.get() is the value for position in self.o
             position=int(self.iv6.get())-1
             tup1=self.o[position]
             coursenum=tup1[0]
@@ -734,22 +849,12 @@ class poop:
             gtid=tup2[2]
             c=self.db.cursor()
             a=self.semester()
-            print(a)
-        try:
-            h=c.execute("INSERT INTO RATES (UGRAD_GTID, SCHOOL, COURSE_NUM, TUT_GTID, NUMERIC_E, DESCRIP_E) VALUES ((%s), (%s), (%s), (%s), (%s), (%s))",( str(self.iv.get()), str(school), str(coursenum), str(gtid), str(self.numet.get()), str(self.descript.get())))  
-            self.win5.withdraw()
-            self.Mainmenu()
-#MAKE SURE INSERT ONLY ONCE 
-        except:
-            messagebox.showinfo(message="You can only rate a tutor for a course once per semester.")
-
-    def search_sched_tutor(self):
-        #drop down course & num
-        #selected times
-        
-        pass 
-        
-        
+            try:
+                h=c.execute("INSERT INTO RATES (UGRAD_GTID, SCHOOL, COURSE_NUM, TUT_GTID, NUMERIC_E, DESCRIP_E, SEMESTER) VALUES ((%s), (%s), (%s), (%s), (%s), (%s), (%s))",( str(self.iv.get()), str(school), str(coursenum), str(gtid), str(self.numet.get()), str(self.descript.get()), str(self.semester())))  
+                self.win5.withdraw()
+                self.Mainmenu()
+            except:
+                messagebox.showinfo(message="You can only rate a tutor for a course once per semester.")
 
     def recommend1(self):
         self.win1.withdraw()
@@ -775,7 +880,6 @@ class poop:
         l.grid(row=0, column=0, sticky=E+W)
         for i in self.tutors:
             co=str(i[0])
-            print(co)
             rb="rb"+str(self.count)
             rb=Radiobutton(self.win7, text=co, value=co, variable=self.gtidforrec)
             rb.grid(row=r, column=0, sticky=E+W)
@@ -817,57 +921,262 @@ class poop:
         if self.desc.get()=="" or self.numpp.get()==0:
             messagebox.showinfo(message="You have not filled in all the fields.")
         else:
-          #  try:
-            c=self.db.cursor()
-            h=c.execute("INSERT INTO RECOMMENDS (TUT_GTID, PROF_GTID, DESCRIP_E, NUMERIC_E) VALUES ((%s), (%s), (%s), (%s))",( str(self.gtidforrec.get()), str(self.iv.get()), str(self.desc.get()), str(self.numpp.get())))  
-            self.win7.withdraw()
-            self.Mainmenu()
-##            except:
-##                messagebox.showinfo(message="You can't recommend a tutor more than once.")
-           
-    def summ1(self):
+            try:
+                c=self.db.cursor()
+                h=c.execute("INSERT INTO RECOMMENDS (TUT_GTID, PROF_GTID, DESCRIP_E, NUMERIC_E) VALUES ((%s), (%s), (%s), (%s))",( str(self.gtidforrec.get()), str(self.iv.get()), str(self.desc.get()), str(self.numpp.get())))  
+                self.win7.withdraw()
+                self.Mainmenu()
+            except:
+                messagebox.showinfo(message="You can't recommend a tutor more than once.")
+
+    def findmysched(self):
         self.win1.withdraw()
-        self.win8=Toplevel()
-        self.win8.title("Summary 1")
         c=self.db.cursor()
-        l=Label(self.win8, text="Academic Year 2014")
-        l.grid(column=0, row=0, sticky=E+W)
-        sp = Label(self.win8, text = "    ")
-        sp.grid(column = 1, row = 0, sticky=E+W)
-        w = Checkbutton(self.win8)
-        w.grid(column=2, row=0, sticky=E+W)
-        l1=Label(self.win8, text = "Fall")
-        l1.grid(column=3, row=0, sticky=E+W)
-        sp1 = Label(self.win8, text = "    ")
-        sp1.grid(column = 4, row = 0, sticky=E+W)
-        w1 = Checkbutton(self.win8)
-        w1.grid(column=5, row=0, sticky=E+W)
-        l2=Label(self.win8, text = "Spring")
-        l2.grid(column=6, row=0, sticky=E+W)
-        sp2 = Label(self.win8, text = "    ")
-        sp2.grid(column = 7, row = 0, sticky=E+W)
-        w2 = Checkbutton(self.win8)
-        w2.grid(column=8, row=0, sticky=E+W)
-        l3=Label(self.win8, text = "Summmer")
-        l3.grid(column=9, row=0, sticky=E+W)
-        sp3 = Label(self.win8, text = "    ")
-        sp3.grid(column = 10, row = 0, sticky=E+W)
-        b=Button(self.win8, text="Ok")
-        b.grid(column = 10, row =0, sticky =E+W)
+        p=c.execute("SELECT TUT_GTID FROM TUTOR")
+        p=c.fetchall()
+        eh=[]
+        for i in p:
+            for y in i:
+                eh.append(y)
+        if self.iv.get() not in eh:
+            messagebox.showinfo(title="Not for you!", message="You must be a Tutor to have a Schedule.")
+            self.Mainmenu()
+        else:
+            self.win10=Toplevel()
+            self.win10.title("Find My Schedule")
+            c=self.db.cursor()
+            h=c.execute("SELECT FNAME, LNAME FROM STUDENT WHERE STUD_GTID =(%s)", str(self.iv.get()))
+            h=c.fetchall()
+            a=""
+            for i in h:
+                for l in i:
+                    a=a+str(l)
+            con="Schedule for Student "+a+" with GTID "+str(self.iv.get())
+            l=Label(self.win10, text=con)
+            l.grid(row=0, column=0, sticky=E+W, columnspan=6)
+            l1=Label(self.win10, text="Day")
+            l1.grid(row=1, column=0, sticky=E+W)
+            l2=Label(self.win10, text="Time")
+            l2.grid(row=1, column=1, sticky=E+W)
+            l3=Label(self.win10, text="First Name")
+            l3.grid(row=1, column=2, sticky=E+W)
+            l4=Label(self.win10, text="Last Name")
+            l4.grid(row=1, column=3, sticky=E+W)
+            l5=Label(self.win10, text="E-mail")
+            l5.grid(row=1, column=4, sticky=E+W)
+            l6=Label(self.win10, text="Course")
+            l6.grid(row=1, column=5, sticky=E+W)
+            n=c.execute("SELECT CHOOSES.WEEKDAY, CHOOSES.TIME, STUDENT.FNAME, STUDENT.LNAME, STUDENT.EMAIL, CHOOSES.SCHOOL, CHOOSES.COURSE_NUM FROM CHOOSES JOIN TUTOR ON TUTOR.TUT_GTID=CHOOSES.TUT_GTID JOIN UNDERGRAD ON CHOOSES.UGRAD_GTID=UNDERGRAD.UGRAD_GTID JOIN STUDENT ON STUDENT.STUD_GTID=UNDERGRAD.UGRAD_GTID WHERE TUTOR.TUT_GTID=(%s)",str(self.iv.get()))
+            n=c.fetchall()
+            #(('W', datetime.timedelta(0, 39600), 'Brock', 'Li', 'brock.li', 'CS', 2200),)
+            if len(n)!=0:
+                count=2
+                col=0
+                for y in n:
+                    l7=Label(self.win10, text=y[0])
+                    l7.grid(row=count, column=col, sticky=E+W)
+                    col=col+1
+                    l8=Label(self.win10, text=y[1])
+                    l8.grid(row=count, column=col, sticky=E+W)
+                    col=col+1
+                    l9=Label(self.win10, text=y[2])
+                    l9.grid(row=count, column=col, sticky=E+W)
+                    col=col+1
+                    l10=Label(self.win10, text=y[3])
+                    l10.grid(row=count, column=col, sticky=E+W)
+                    col=col+1
+                    l11=Label(self.win10, text=y[4])
+                    l11.grid(row=count, column=col, sticky=E+W)
+                    col=col+1
+                    con=str(y[5])+" "+str(y[6])
+                    l12=Label(self.win10, text=con)
+                    l12.grid(row=count, column=col, sticky=E+W)
+                    count=count+1
+                    col=0
+                    
+            
+            
+        
+    def sum1(self):
+        self.win1.withdraw()
+        c=self.db.cursor()
+        p=c.execute("SELECT * FROM ADMINISTRATOR")
+        p=c.fetchall()
+        eh=[]
+        for i in p:
+            for y in i:
+                eh.append(y)
+        if self.iv.get() not in eh:
+            messagebox.showinfo(title="Reserved Procedure", message="This function is only allowed for the administrators")
+            self.Mainmenu()
+        else:
+            self.win8=Toplevel()
+            self.win8.title("Summary 1")
+            c=self.db.cursor()
+            self.fall2014=IntVar()
+            self.summer2014=IntVar()
+            self.spring2014=IntVar()
+            l=Label(self.win8, text="Academic Year 2014")
+            l.grid(column=0, row=0, sticky=E+W)
+            w = Checkbutton(self.win8, onvalue=3, offvalue=0, variable=self.fall2014)
+            w.grid(column=2, row=0, sticky=E+W, columnspan=1)
+            l1=Label(self.win8, text = "Fall")
+            l1.grid(column=1, row=0, sticky=E+W)
+            w1 = Checkbutton(self.win8, onvalue=1, offvalue=0, variable=self.spring2014)
+            w1.grid(column=4, row=0, sticky=E+W, columnspan=1)
+            l2=Label(self.win8, text = "Spring")
+            l2.grid(column=3, row=0, sticky=E+W)
+            w2 = Checkbutton(self.win8, onvalue=2, offvalue=0, variable=self.summer2014)
+            w2.grid(column=6, row=0, sticky=E+W, columnspan=1)
+            l3=Label(self.win8, text = "Summmer")
+            l3.grid(column=5, row=0, sticky=E+W)
+            b=Button(self.win8, text="Ok", command=self.sum12)
+            b.grid(column =7 , row =0, sticky =E+W)
+ 
 
-        #frame.grid(row=0,column=0)
-        #canvas=Canvas(frame,bg='#FFFFFF',width=600,height=600,scrollregion=(0,0,500,500))
-        #vbar=Scrollbar(frame,orient=VERTICAL)
-        #vbar.pack(side=RIGHT,fill=Y)
-        #vbar.config(command=canvas.yview)
-        #canvas.config(width=300,height=300)
-        #canvas.config(yscrollcommand=vbar.set)
-        #canvas.pack(side=LEFT,expand=True,fill=BOTH)    
+    def sum12(self):
+        c=self.db.cursor()
+        if self.spring2014.get()==1 and self.summer2014.get()==0 and self.fall2014.get()==0:
+            b=c.execute("CREATE VIEW Admin_Report1 AS (SELECT CONCAT(CHOOSES.SCHOOL,CHOOSES.COURSE_NUM) AS Course, SEMESTER, COUNT(DISTINCT CHOOSES.UGRAD_GTID) AS Num_Students, COUNT(DISTINCT CHOOSES.TUT_GTID) AS Num_Tutors FROM CHOOSES  WHERE SEMESTER IN ((%s))  GROUP BY CONCAT(SCHOOL,COURSE_NUM), SEMESTER ORDER BY SCHOOL, COURSE_NUM, SEMESTER)","Spring 2014")
+        if self.summer2014.get()==2 and self.spring2014.get()==0 and self.fall2014.get()==0:
+            b=c.execute("CREATE VIEW Admin_Report1 AS (SELECT CONCAT(CHOOSES.SCHOOL,CHOOSES.COURSE_NUM) AS Course, SEMESTER, COUNT(DISTINCT CHOOSES.UGRAD_GTID) AS Num_Students, COUNT(DISTINCT CHOOSES.TUT_GTID) AS Num_Tutors FROM CHOOSES  WHERE SEMESTER IN ((%s))  GROUP BY CONCAT(SCHOOL,COURSE_NUM), SEMESTER ORDER BY SCHOOL, COURSE_NUM, SEMESTER)","Summer 2014")
+        if self.fall2014.get()==3 and self.spring2014.get()==0 and self.summer2014.get()==0:
+            b=c.execute("CREATE VIEW Admin_Report1 AS (SELECT CONCAT(CHOOSES.SCHOOL,CHOOSES.COURSE_NUM) AS Course, SEMESTER, COUNT(DISTINCT CHOOSES.UGRAD_GTID) AS Num_Students, COUNT(DISTINCT CHOOSES.TUT_GTID) AS Num_Tutors FROM CHOOSES  WHERE SEMESTER IN ((%s))  GROUP BY CONCAT(SCHOOL,COURSE_NUM), SEMESTER ORDER BY SCHOOL, COURSE_NUM, SEMESTER)","Fall 2014")
+        if self.spring2014.get()==1 and self.summer2014.get()==2 and self.fall2014.get()==0:
+            b=c.execute("CREATE VIEW Admin_Report1 AS (SELECT CONCAT(CHOOSES.SCHOOL,CHOOSES.COURSE_NUM) AS Course, SEMESTER, COUNT(DISTINCT CHOOSES.UGRAD_GTID) AS Num_Students, COUNT(DISTINCT CHOOSES.TUT_GTID) AS Num_Tutors FROM CHOOSES  WHERE SEMESTER IN ((%s), (%s))  GROUP BY CONCAT(SCHOOL,COURSE_NUM), SEMESTER ORDER BY SCHOOL, COURSE_NUM, SEMESTER)",("Spring 2014", "Summer 2014"))
+        if self.spring2014.get()==1 and self.summer2014.get()==0 and self.fall2014.get()==3:
+            b=c.execute("CREATE VIEW Admin_Report1 AS (SELECT CONCAT(CHOOSES.SCHOOL,CHOOSES.COURSE_NUM) AS Course, SEMESTER, COUNT(DISTINCT CHOOSES.UGRAD_GTID) AS Num_Students, COUNT(DISTINCT CHOOSES.TUT_GTID) AS Num_Tutors FROM CHOOSES  WHERE SEMESTER IN ((%s), (%s))  GROUP BY CONCAT(SCHOOL,COURSE_NUM), SEMESTER ORDER BY SCHOOL, COURSE_NUM, SEMESTER)",("Spring 2014", "Fall 2014"))
+        if self.spring2014.get()==0 and self.summer2014.get()==2 and self.fall2014.get()==3:
+            b=c.execute("CREATE VIEW Admin_Report1 AS (SELECT CONCAT(CHOOSES.SCHOOL,CHOOSES.COURSE_NUM) AS Course, SEMESTER, COUNT(DISTINCT CHOOSES.UGRAD_GTID) AS Num_Students, COUNT(DISTINCT CHOOSES.TUT_GTID) AS Num_Tutors FROM CHOOSES  WHERE SEMESTER IN ((%s), (%s))  GROUP BY CONCAT(SCHOOL,COURSE_NUM), SEMESTER ORDER BY SCHOOL, COURSE_NUM, SEMESTER)",("Summer 2014", "Fall 2014"))
+        if self.spring2014.get()==1 and self.summer2014.get()==2 and self.fall2014.get()==3:
+            b=c.execute("CREATE VIEW Admin_Report1 AS (SELECT CONCAT(CHOOSES.SCHOOL,CHOOSES.COURSE_NUM) AS Course, SEMESTER, COUNT(DISTINCT CHOOSES.UGRAD_GTID) AS Num_Students, COUNT(DISTINCT CHOOSES.TUT_GTID) AS Num_Tutors FROM CHOOSES  WHERE SEMESTER IN ((%s), (%s), (%s))  GROUP BY CONCAT(SCHOOL,COURSE_NUM), SEMESTER ORDER BY SCHOOL, COURSE_NUM, SEMESTER)",("Spring 2014","Summer 2014", "Fall 2014"))
+        elif self.spring2014.get()==0 and self.summer2014.get()==0 and self.fall2014.get()==0:
+            messagebox.showinfo(title="Error!", message="Please select a semester!")
+        h=c.execute("SELECT * FROM Admin_Report1")
+        n=c.fetchall()
+        #((b'CS2200', 'Spring 2014', 1, 1), (b'CS4400', 'Fall 2014', 1, 1))
+        #self.win8
+        l=Label(self.win8, text="Course")
+        l.grid(row=1, column=0, sticky=E+W)
+        l1=Label(self.win8, text="Semester")
+        l1.grid(row=1, column=1, sticky=E+W)
+        l2=Label(self.win8, text="Number of Students")
+        l2.grid(row=1, column=2, sticky=E+W)
+        l3=Label(self.win8, text="Number of Tutors")
+        l3.grid(row=1, column=3, sticky=E+W)
+        t=c.execute("CREATE VIEW Totals AS (SELECT Course ,SUM(Num_Students) AS Total_Num_Students, SUM(Num_Tutors) AS Total_Num_Tutors FROM Admin_Report1 GROUP BY Course ORDER BY Course)")  
+        t=c.execute("SELECT * FROM Totals")
+        t=c.fetchall()
+        print(t)
+        col=0
+        ro=2
+        num=0
+        #((,))
+        for i in n:
+            l4=Label(self.win8, text=i[0])
+            l4.grid(row=ro, column=col, sticky=E+W)
+            col=col+1
+            l5=Label(self.win8, text=i[1])
+            l5.grid(row=ro, column=col, sticky=E+W)
+            col=col+1
+            l6=Label(self.win8, text=i[2])
+            l6.grid(row=ro, column=col, sticky=E+W)
+            col=col+1
+            l7=Label(self.win8, text=i[3])
+            l7.grid(row=ro, column=col, sticky=E+W)
+            col=col+1
+            col=0
+            ro=ro+1
+        q=c.execute("SELECT SUM(Total_Num_Students) AS Grand_Total_Num_Students, SUM(Total_Num_Tutors) AS Grand_Total_Num_Tutors FROM Totals") 
+        q=c.fetchall()
+        print(q)
+       # except:
+#            print("this didn't work...")
+            
+    def sum2(self):
+        self.win1.withdraw()
+        c=self.db.cursor()
+        p=c.execute("SELECT * FROM ADMINISTRATOR")
+        p=c.fetchall()
+        eh=[]
+        for i in p:
+            for y in i:
+                eh.append(y)
+        if self.iv.get() not in eh:
+            messagebox.showinfo(title="Reserved Procedure", message="This function is only allowed for the administrators")
+            self.Mainmenu()
+        else:
+            self.win9=Toplevel()
+            self.win9.title("Summary 1")
+            c=self.db.cursor()
+            self.fall=IntVar()
+            self.spring=IntVar()
+            self.summer=IntVar()
+            l=Label(self.win9, text="Academic Year 2014")
+            l.grid(column=0, row=0, sticky=E+W)
+            sp = Label(self.win9, text = "    ")
+            sp.grid(column = 1, row = 0, sticky=E+W)
+            w = Checkbutton(self.win9, variable=self.fall, onvalue=3, offvalue=0)
+            w.grid(column=2, row=0, sticky=E+W)
+            l1=Label(self.win9, text = "Fall")
+            l1.grid(column=3, row=0, sticky=E+W)
+            sp1 = Label(self.win9, text = "    ")
+            sp1.grid(column = 4, row = 0, sticky=E+W)
+            w1 = Checkbutton(self.win9, variable=self.spring, onvalue=1, offvalue=0)
+            w1.grid(column=5, row=0, sticky=E+W)
+            l2=Label(self.win9, text = "Spring")
+            l2.grid(column=6, row=0, sticky=E+W)
+            sp2 = Label(self.win9, text = "    ")
+            sp2.grid(column = 7, row = 0, sticky=E+W)
+            w2 = Checkbutton(self.win9, onvalue=2, offvalue=2, variable=self.summer)
+            w2.grid(column=8, row=0, sticky=E+W)
+            l3=Label(self.win9, text = "Summmer")
+            l3.grid(column=9, row=0, sticky=E+W)
+            sp3 = Label(self.win9, text = "    ")
+            sp3.grid(column = 10, row = 0, sticky=E+W)
+            b=Button(self.win9, text="Ok", command=self.sum22)
+            b.grid(column = 10, row =0, sticky =E+W)
+            
+    def sum22(self):
+        c=self.db.cursor()
+        #THE SQL UNDER EACH IF STATEMENT IS INCORRECT 
+        if self.spring.get()==1 and self.summer.get()==0 and self.fall.get()==0:
+            b=c.execute("CREATE VIEW Admin_Report1 AS (SELECT CONCAT(CHOOSES.SCHOOL,CHOOSES.COURSE_NUM) AS Course, SEMESTER, COUNT(DISTINCT CHOOSES.UGRAD_GTID) AS Num_Students, COUNT(DISTINCT CHOOSES.TUT_GTID) AS Num_Tutors FROM CHOOSES  WHERE SEMESTER IN ((%s))  GROUP BY CONCAT(SCHOOL,COURSE_NUM), SEMESTER ORDER BY SCHOOL, COURSE_NUM, SEMESTER)","Spring 2014")
+        if self.summer.get()==2 and self.spring.get()==0 and self.fall.get()==0:
+            b=c.execute("CREATE VIEW Admin_Report1 AS (SELECT CONCAT(CHOOSES.SCHOOL,CHOOSES.COURSE_NUM) AS Course, SEMESTER, COUNT(DISTINCT CHOOSES.UGRAD_GTID) AS Num_Students, COUNT(DISTINCT CHOOSES.TUT_GTID) AS Num_Tutors FROM CHOOSES  WHERE SEMESTER IN ((%s))  GROUP BY CONCAT(SCHOOL,COURSE_NUM), SEMESTER ORDER BY SCHOOL, COURSE_NUM, SEMESTER)","Summer 2014")
+        if self.fall.get()==3 and self.spring.get()==0 and self.summer.get()==0:
+            b=c.execute("CREATE VIEW Admin_Report1 AS (SELECT CONCAT(CHOOSES.SCHOOL,CHOOSES.COURSE_NUM) AS Course, SEMESTER, COUNT(DISTINCT CHOOSES.UGRAD_GTID) AS Num_Students, COUNT(DISTINCT CHOOSES.TUT_GTID) AS Num_Tutors FROM CHOOSES  WHERE SEMESTER IN ((%s))  GROUP BY CONCAT(SCHOOL,COURSE_NUM), SEMESTER ORDER BY SCHOOL, COURSE_NUM, SEMESTER)","Fall 2014")
+        if self.spring.get()==1 and self.summer.get()==2 and self.fall.get()==0:
+            b=c.execute("CREATE VIEW Admin_Report1 AS (SELECT CONCAT(CHOOSES.SCHOOL,CHOOSES.COURSE_NUM) AS Course, SEMESTER, COUNT(DISTINCT CHOOSES.UGRAD_GTID) AS Num_Students, COUNT(DISTINCT CHOOSES.TUT_GTID) AS Num_Tutors FROM CHOOSES  WHERE SEMESTER IN ((%s), (%s))  GROUP BY CONCAT(SCHOOL,COURSE_NUM), SEMESTER ORDER BY SCHOOL, COURSE_NUM, SEMESTER)",("Spring 2014", "Summer 2014"))
+        if self.spring.get()==1 and self.summer.get()==0 and self.fall.get()==3:
+            b=c.execute("CREATE VIEW Admin_Report1 AS (SELECT CONCAT(CHOOSES.SCHOOL,CHOOSES.COURSE_NUM) AS Course, SEMESTER, COUNT(DISTINCT CHOOSES.UGRAD_GTID) AS Num_Students, COUNT(DISTINCT CHOOSES.TUT_GTID) AS Num_Tutors FROM CHOOSES  WHERE SEMESTER IN ((%s), (%s))  GROUP BY CONCAT(SCHOOL,COURSE_NUM), SEMESTER ORDER BY SCHOOL, COURSE_NUM, SEMESTER)",("Spring 2014", "Fall 2014"))
+        if self.spring.get()==0 and self.summer.get()==2 and self.fall.get()==3:
+            b=c.execute("CREATE VIEW Admin_Report1 AS (SELECT CONCAT(CHOOSES.SCHOOL,CHOOSES.COURSE_NUM) AS Course, SEMESTER, COUNT(DISTINCT CHOOSES.UGRAD_GTID) AS Num_Students, COUNT(DISTINCT CHOOSES.TUT_GTID) AS Num_Tutors FROM CHOOSES  WHERE SEMESTER IN ((%s), (%s))  GROUP BY CONCAT(SCHOOL,COURSE_NUM), SEMESTER ORDER BY SCHOOL, COURSE_NUM, SEMESTER)",("Summer 2014", "Fall 2014"))
+        if self.spring.get()==1 and self.summer.get()==2 and self.fall.get()==3:
+            b=c.execute("CREATE VIEW Admin_Report1 AS (SELECT CONCAT(CHOOSES.SCHOOL,CHOOSES.COURSE_NUM) AS Course, SEMESTER, COUNT(DISTINCT CHOOSES.UGRAD_GTID) AS Num_Students, COUNT(DISTINCT CHOOSES.TUT_GTID) AS Num_Tutors FROM CHOOSES  WHERE SEMESTER IN ((%s), (%s), (%s))  GROUP BY CONCAT(SCHOOL,COURSE_NUM), SEMESTER ORDER BY SCHOOL, COURSE_NUM, SEMESTER)",("Spring 2014","Summer 2014", "Fall 2014"))
+        if self.spring.get()==0 and self.summer.get()==0 and self.fall.get()==0:
+            messagebox.showinfo(title="Error!", message="Please select a semester!")
+        h=c.execute("SELECT * FROM 'Admin_Report2'")
+        n=c.fetchall()
+        print(n)
+#this sql is wrong... for sure but needs to be fixed and replace the admin report1         
+#        b=c.execute("CREATE VIEW Admin_Report2 AS (SELECT CONCAT(CHOOSES.SCHOOL, ‘ ‘,CHOOSES.COURSE_NUM) AS Course, $Semester, COUNT(SELECT DISTINCT TUT_GTID FROM TUTORS WHERE TUTORS.GTA=’TRUE’) AS GTAs, AVG(SELECT RATES.NUMERICAL_E FROM RATES JOIN TUTORS ON RATES. TUT_GTID=TUTORS.TUT_GTID WHERE TUTORS.GTA=’TRUE’) AS AvgRating_GTAs,COUNT(SELECT DISTINCT TUT_GTID FROM TUTORS WHERE TUTORS.GTA=’FALSE’) AS Not_GTAs, AVG(SELECT RATES.NUMERICAL_E FROM RATES JOIN TUTORS ON RATES.TUTOR_GTID= TUTORS.TUT_GTID WHERE TUTORS.GTA=’FALSE’) AS AvgRating_Not_GTAs FROM CHOOSES WHERE SEMESTER IN ($Semester) GROUP BY Course, ORDER BY SCHOOL, COURSE_NUM, SEMESTER ORDER BY CHOOSES. SCHOOL, CHOOSES.COURSE_NUM, SEMESTER)") 
+       # except:
+#            print("poop....")
+        
 
 
-# should check to see if
-# entry is a string when intvar
-#what is the password? stringvar
+            
+            #frame.grid(row=0,column=0)
+            #canvas=Canvas(frame,bg='#FFFFFF',width=600,height=600,scrollregion=(0,0,500,500))
+            #vbar=Scrollbar(frame,orient=VERTICAL)
+            #vbar.pack(side=RIGHT,fill=Y)
+            #vbar.config(command=canvas.yview)
+            #canvas.config(width=300,height=300)
+            #canvas.config(yscrollcommand=vbar.set)
+            #canvas.pack(side=LEFT,expand=True,fill=BOTH)    
+
+
 win=Tk()
 app=poop(win)
 win.title("Georgia Tech Tutor System")
